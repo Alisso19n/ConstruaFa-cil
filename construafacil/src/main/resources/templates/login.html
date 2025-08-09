@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>ConstruaFácil — Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+        background: linear-gradient(135deg, #6ec1e4 0%, #ffffff 100%);
+        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .login-box {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 6px 30px rgba(44,160,255,0.15);
+        padding: 42px 34px;
+        max-width: 370px;
+        width: 100%;
+        text-align: center;
+    }
+    .logo {
+        font-size: 2.1em;
+        color: #3498db;
+        font-weight: bold;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+    }
+    .slogan {
+        font-size: 1.1em;
+        color: #2980b9;
+        margin-bottom: 28px;
+        font-weight: 500;
+    }
+    .login-box input[type="text"],
+    .login-box input[type="password"] {
+        width: 100%;
+        padding: 12px 10px;
+        margin: 12px 0 20px 0;
+        border: 1px solid #c7e5f8;
+        border-radius: 7px;
+        font-size: 1em;
+    }
+    .login-box button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 7px;
+        background-color: #3498db;
+        color: #fff;
+        font-size: 1.1em;
+        font-weight: bold;
+        letter-spacing: 1px;
+        box-shadow: 0 2px 12px rgba(52,152,219,0.07);
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+    .login-box button:hover {
+        background-color: #217dbb;
+    }
+    .cadastro-link {
+        display: block;
+        margin-top: 18px;
+        font-size: 1em;
+        color: #3498db;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .cadastro-link:hover {
+        color: #217dbb;
+    }
+    .message {
+        font-size: 1em;
+        margin-bottom: 12px;
+        padding: 8px 0;
+        border-radius: 8px;
+    }
+    .erro { color: #d62828; background: #ffe5e5; }
+    .sucesso { color: #218838; background: #e8f7ec; }
+    .aviso { color: #e67e22; background: #fff8e6; }
+    @media (max-width: 600px) {
+        .login-box {
+            padding: 30px 12px;
+            max-width: 99vw;
+        }
+        .logo {
+            font-size: 1.4em;
+        }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="login-box">
+    <div class="logo">ConstruaFácil</div>
+    <div class="slogan">Sua obra começa aqui, com segurança e confiança.</div>
+
+    <!-- Mensagens dinâmicas -->
+    <div th:if="${param.error}" class="message erro">
+      Usuário ou senha inválidos.
+    </div>
+    <div th:if="${param.logout}" class="message sucesso">
+      Logout realizado com sucesso.
+    </div>
+    <div th:if="${param.cadastroClienteSucesso}" class="message sucesso">
+      Cadastro realizado com sucesso! Faça login para acessar sua conta.
+    </div>
+    <div th:if="${param.aguardeAprovacao}" class="message aviso">
+      Cadastro realizado! Aguarde a aprovação do administrador para acessar sua conta.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+      <input type="text" name="username" placeholder="E-mail ou admin" required>
+      <input type="password" name="password" placeholder="Senha" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <a class="cadastro-link" th:href="@{/clientes/cadastro}">Não possui cadastro? Cadastre-se como Cliente</a>
+    <a class="cadastro-link" th:href="@{/profissionais/cadastro}">Cadastrar-se como Profissional</a>
+  </div>
+</div>
+</body>
+</html>

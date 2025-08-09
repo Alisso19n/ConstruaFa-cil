@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Excluir Conta | ConstruaFácil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+        background: linear-gradient(135deg, #eaf6fb 0%, #d5ecfa 100%);
+        font-family: 'Segoe UI', Arial, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .caixa {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 22px rgba(44,160,255,0.12);
+        padding: 36px 32px 26px 32px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+    }
+    .titulo {
+        font-size: 1.5em;
+        color: #e74c3c;
+        font-weight: bold;
+        margin-bottom: 14px;
+    }
+    .mensagem {
+        color: #555;
+        margin-bottom: 22px;
+        font-size: 1.1em;
+    }
+    .botoes {
+        display: flex;
+        justify-content: space-between;
+    }
+    .btn {
+        border: none;
+        border-radius: 7px;
+        padding: 10px 26px;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 0 3px;
+        transition: background 0.2s;
+    }
+    .excluir {
+        background: #e74c3c;
+        color: #fff;
+    }
+    .excluir:hover {
+        background: #c0392b;
+    }
+    .cancelar {
+        background: #eee;
+        color: #555;
+    }
+    .cancelar:hover {
+        background: #bbb;
+    }
+  </style>
+</head>
+<body>
+<div class="caixa">
+  <div class="titulo">Excluir Conta</div>
+  <div class="mensagem">
+    Tem certeza que deseja <b>excluir sua conta</b>, <span th:text="${cliente.nome}">Nome do Cliente</span>?<br>
+    Essa ação <b>não poderá ser desfeita</b> e todas as suas solicitações também serão removidas!
+  </div>
+  <form th:action="@{/clientes/excluir}" method="post" class="botoes">
+    <button type="submit" class="btn excluir">Excluir</button>
+    <a th:href="@{/clientes/painel}" class="btn cancelar">Cancelar</a>
+  </form>
+</div>
+</body>
+</html>

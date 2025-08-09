@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Cliente | ConstruaFácil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+        background: linear-gradient(135deg, #6ec1e4 0%, #ffffff 100%);
+        font-family: 'Segoe UI', Arial, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cadastro-box {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 6px 30px rgba(44,160,255,0.15);
+        padding: 38px 30px 28px 30px;
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+    }
+    .titulo {
+        font-size: 1.7em;
+        color: #3498db;
+        font-weight: bold;
+        margin-bottom: 22px;
+    }
+    input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
+        width: 100%;
+        padding: 12px 10px;
+        margin-bottom: 18px;
+        border: 1px solid #c7e5f8;
+        border-radius: 7px;
+        font-size: 1em;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 7px;
+        background-color: #3498db;
+        color: #fff;
+        font-size: 1.1em;
+        font-weight: bold;
+        letter-spacing: 1px;
+        box-shadow: 0 2px 12px rgba(52,152,219,0.07);
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #217dbb;
+    }
+    .voltar-link {
+        display: block;
+        margin-top: 18px;
+        font-size: 1em;
+        color: #3498db;
+        text-decoration: none;
+    }
+    .voltar-link:hover {
+        color: #217dbb;
+    }
+    @media (max-width: 600px) {
+        .cadastro-box {
+            padding: 20px 6px 16px 6px;
+            max-width: 99vw;
+        }
+    }
+  </style>
+</head>
+<body>
+<div class="cadastro-box">
+  <div class="titulo">Cadastro de Cliente</div>
+  <form th:action="@{/clientes/cadastro}" th:object="${cliente}" method="post">
+    <input type="text" th:field="*{nome}" placeholder="Nome completo" required>
+    <input type="email" th:field="*{email}" placeholder="E-mail" required>
+    <input type="password" th:field="*{senha}" placeholder="Senha" required>
+    <input type="tel" th:field="*{telefone}" placeholder="Telefone" required>
+    <button type="submit">Cadastrar</button>
+  </form>
+  <a th:href="@{/login}" class="voltar-link">Voltar ao login</a>
+</div>
+</body>
+</html>

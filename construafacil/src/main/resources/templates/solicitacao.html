@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Nova Solicitação | ConstruaFácil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+        background: linear-gradient(135deg, #eaf6fb 0%, #d5ecfa 100%);
+        font-family: 'Segoe UI', Arial, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+    }
+    .container {
+        max-width: 430px;
+        margin: 34px auto 0 auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 22px rgba(44,160,255,0.13);
+        padding: 36px 30px 28px 30px;
+    }
+    .titulo {
+        font-size: 1.5em;
+        color: #3498db;
+        font-weight: bold;
+        margin-bottom: 24px;
+        text-align: center;
+    }
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 7px;
+        color: #555;
+    }
+    input, select, textarea {
+        width: 100%;
+        padding: 11px;
+        margin-bottom: 17px;
+        border: 1px solid #c8e4fa;
+        border-radius: 6px;
+        font-size: 1em;
+        box-sizing: border-box;
+        background: #f7fbfe;
+        transition: border 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+    .erro {
+        color: #e74c3c;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    .botao {
+        width: 100%;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        font-size: 1em;
+        font-weight: bold;
+        padding: 13px;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 10px;
+    }
+    .botao:hover {
+        background-color: #217dbb;
+    }
+    @media (max-width: 600px) {
+        .container {
+            padding: 10px 2vw 18px 2vw;
+            max-width: 98vw;
+        }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="titulo">Solicitar Serviço</div>
+  <form th:action="@{/solicitacoes/nova}" method="post" th:object="${solicitacao}">
+    <div th:if="${erro}" class="erro" th:text="${erro}"></div>
+    <label for="profissional">Profissional:</label>
+    <select id="profissional" name="profissional.id" required>
+      <option value="">Selecione um profissional</option>
+      <option th:each="p : ${profissionais}"
+              th:value="${p.id}"
+              th:text="${p.nome + ' (' + p.profissao + ')'}"></option>
+    </select>
+
+    <label for="descricao">Descrição do serviço:</label>
+    <textarea id="descricao" name="descricao" rows="4" placeholder="Descreva o serviço desejado" required th:field="*{descricao}"></textarea>
+
+    <button type="submit" class="botao">Enviar Solicitação</button>
+  </form>
+  <div style="text-align:center;margin-top:15px;">
+    <a th:href="@{/clientes/painel}" style="color:#3498db;font-weight:600;">Voltar para o painel</a>
+  </div>
+</div>
+</body>
+</html>
