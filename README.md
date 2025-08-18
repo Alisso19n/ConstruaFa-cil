@@ -25,7 +25,7 @@ Interface Responsiva
 Páginas otimizadas para desktop e dispositivos móveis.
 🛠️ Tecnologias utilizadas
 Backend: Java 21, Spring Boot 3.5.1
-Banco de Dados: H2 (em memória, para testes)
+Banco de Dados: H2 
 Frontend: Thymeleaf (HTML5, CSS3)
 Gerenciamento de dependências: Maven
 Segurança: Spring Security
