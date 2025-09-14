@@ -6,20 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AuthController {
 
+    // Página de login do Spring Security
     @GetMapping("/login")
     public String login() {
-        return "login";
-    }
-
-    @GetMapping("/")
-    public String root() {
-        // Redireciona para tela de login
-        return "redirect:/login";
-    }
-
-    @GetMapping("/logout")
-    public String logout() {
-        // Pode customizar para mostrar mensagem, etc
-        return "redirect:/login?logout";
+        return "login"; // templates/login.html
     }
 }

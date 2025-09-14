@@ -2,31 +2,233 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>ConstruaFácil — Sua obra começa aqui</title>
+    <title>ConstruaFácil — Encontre profissionais e serviços</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <style>
-        body { background: linear-gradient(135deg, #eaf6fb 0%, #d5ecfa 100%); font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; margin: 0; }
-        .center { max-width: 420px; margin: 52px auto 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 6px 36px rgba(44,160,255,0.14); padding: 38px 28px; text-align: center; }
-        .logo { font-size: 2.3em; color: #3498db; font-weight: bold; margin-bottom: 8px; letter-spacing: 1.5px;}
-        .slogan { font-size: 1.2em; color: #2980b9; margin-bottom: 34px; }
-        .botao { display: block; width: 100%; padding: 15px; border: none; border-radius: 9px; background-color: #3498db; color: #fff; font-size: 1.1em; font-weight: bold; text-decoration: none; margin-bottom: 18px; transition: background 0.2s;}
-        .botao:hover { background-color: #217dbb;}
-        .creditos { color: #2980b9; font-size: 1em; margin-top: 35px;}
-        @media (max-width: 600px) {
-          .center { padding: 18px 2vw 24px 2vw; }
-          .logo { font-size: 1.5em; }
-          .botao { font-size: 1em; }
+        :root{
+          --brand:#3498db; --brand-dark:#217dbb; --accent:#27ae60; --bg:#eaf6fb; --ink:#233142;
+        }
+        *{box-sizing:border-box}
+        body{margin:0; font-family: 'Segoe UI', Arial, sans-serif; color:var(--ink); background:linear-gradient(135deg, var(--bg) 0%, #d5ecfa 100%)}
+        a{color:var(--brand); text-decoration:none}
+        a:hover{color:var(--brand-dark)}
+        /* header */
+        header{position:sticky; top:0; z-index:10; background:#fff; box-shadow:0 2px 14px rgba(44,160,255,.08)}
+        .wrap{max-width:1180px; margin:0 auto; padding:14px 18px}
+        .bar{display:flex; align-items:center; justify-content:space-between; gap:12px}
+        .brand{font-weight:800; color:var(--brand); letter-spacing:.5px}
+        .nav{display:flex; gap:12px; flex-wrap:wrap}
+        .btn{display:inline-block; padding:10px 16px; border-radius:9px; background:var(--brand); color:#fff; font-weight:700}
+        .btn:hover{filter:brightness(.95)}
+        .btn.alt{background:var(--accent)}
+        .ghost{padding:10px 16px; border-radius:9px; border:2px solid var(--brand); color:var(--brand); font-weight:700}
+        .ghost:hover{background:var(--brand); color:#fff}
+        /* hero */
+        .hero{padding:42px 18px 20px}
+        .hero .inner{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1.1fr .9fr; gap:20px; align-items:center}
+        .title{font-size:clamp(1.6rem, 3.5vw, 2.2rem); color:var(--brand-dark); margin:0 0 10px}
+        .lead{color:#4a6f8a; margin:0 0 18px}
+        .actions{display:flex; gap:10px; flex-wrap:wrap}
+        .card-hero{background:#fff; border-radius:16px; box-shadow:0 6px 30px rgba(44,160,255,.15); padding:18px}
+        .illus{min-height:200px; background:linear-gradient(135deg,#fff 0%, #eef7ff 100%); border-radius:16px; box-shadow: inset 0 0 0 1px #eef3fb}
+        /* quick categories */
+        .cats{padding:8px 18px 26px}
+        .grid{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:repeat(6,1fr); gap:12px}
+        .chip{background:#fff; border:1px solid #e4eef7; border-radius:999px; padding:10px 14px; text-align:center; font-weight:600; color:#2f4252}
+        .chip:hover{border-color:#cfe3f9}
+        /* anúncios / marketplace */
+        .market{padding:8px 18px 26px}
+        .sec-title{max-width:1180px; margin:0 auto 8px; color:var(--brand-dark)}
+        .cards{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:repeat(4, 1fr); gap:14px}
+        .card{
+          background:#fff; border-radius:14px; box-shadow:0 2px 14px rgba(44,160,255,.08); overflow:hidden; display:flex; flex-direction:column;
+          border:1px solid #eaf2fb;
+        }
+        .card .thumb{background:#eef6ff; height:120px}
+        .card .body{padding:12px}
+        .card h4{margin:0 0 6px; font-size:1.04rem; color:#2c3e50}
+        .meta{font-size:.92rem; color:#6a7b8d; margin-bottom:10px}
+        .price{font-weight:800; color:#1d8249; margin-bottom:10px}
+        .tags{display:flex; flex-wrap:wrap; gap:6px}
+        .tag{font-size:.75rem; background:#f0f7ff; color:#2269a9; padding:4px 8px; border-radius:999px; border:1px solid #e1efff}
+        .card .cta{margin-top:auto; padding:12px; display:flex; gap:8px}
+        .card .cta .btn{flex:1; text-align:center}
+        /* depoimentos */
+        .testi{padding:8px 18px 34px}
+        .tgrid{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+        .tcard{background:#fff; border-radius:14px; padding:16px; border:1px solid #eaf2fb; box-shadow:0 2px 14px rgba(44,160,255,.08)}
+        .who{font-weight:700; color:#2e4961}
+        .star{color:#f7b731}
+        /* footer */
+        footer{background:#fff; text-align:center; padding:14px; color:#6c7a89; font-size:.95rem; border-top:1px solid #eaf2fb}
+        /* responsive */
+        @media (max-width:1000px){ .cards{grid-template-columns:repeat(3,1fr)} .grid{grid-template-columns:repeat(4,1fr)} .tgrid{grid-template-columns:repeat(2,1fr)} }
+        @media (max-width:760px){
+          .hero .inner{grid-template-columns:1fr; text-align:center}
+          .illus{min-height:160px}
+          .cards{grid-template-columns:repeat(2,1fr)}
+          .grid{grid-template-columns:repeat(3,1fr)}
+        }
+        @media (max-width:520px){
+          .cards{grid-template-columns:1fr}
+          .grid{grid-template-columns:repeat(2,1fr)}
+          .nav{gap:8px}
         }
     </style>
 </head>
 <body>
-<div class="center">
-    <div class="logo">ConstruaFácil</div>
-    <div class="slogan">Sua obra começa aqui, com segurança e confiança.</div>
-    <a class="botao" th:href="@{/login}">Entrar</a>
-    <a class="botao" th:href="@{/clientes/cadastro}">Sou Cliente</a>
-    <a class="botao" th:href="@{/profissionais/cadastro}">Sou Profissional</a>
-    <div class="creditos">© 2025 ConstruaFácil | Desenvolvido por Alisson A Divino</div>
-</div>
+
+<header>
+    <div class="wrap bar">
+        <div class="brand">ConstruaFácil</div>
+        <nav class="nav">
+            <!-- Mantemos APENAS estas três ações no topo -->
+            <a class="ghost" th:href="@{/login}">Entrar</a>
+            <a class="btn" th:href="@{/clientes/cadastro}">Sou Cliente</a>
+            <a class="btn alt" th:href="@{/profissionais/cadastro}">Sou Profissional</a>
+        </nav>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="inner">
+        <div>
+            <h1 class="title">Sua obra começa aqui — fácil, rápido e seguro.</h1>
+            <p class="lead">Compare profissionais, veja avaliações e feche serviços com transparência.</p>
+
+            <!-- Reduzimos a redundância: só um CTA primário no herói -->
+            <div class="actions">
+                <a class="btn" th:href="@{/login}">Começar agora</a>
+            </div>
+
+            <!-- Texto auxiliar com links discretos (não botões) -->
+            <div style="margin-top:10px; font-size:.95rem; color:#4a6f8a">
+                Novo por aqui? Cadastre-se como
+                <a th:href="@{/clientes/cadastro}">cliente</a>
+                ou
+                <a th:href="@{/profissionais/cadastro}">profissional</a>.
+            </div>
+        </div>
+        <div class="card-hero">
+            <div class="illus"></div>
+            <div style="margin-top:12px; color:#527491">Dica: mantenha seu perfil completo para receber mais contatos.</div>
+        </div>
+    </div>
+</section>
+
+<section class="cats">
+    <div class="grid">
+        <!-- Agora os chips realmente navegam: levam para o login com a categoria na querystring -->
+        <a class="chip" th:href="@{'/login'(categoria='Pedreiro')}" title="Ver pedreiros">Pedreiro</a>
+        <a class="chip" th:href="@{'/login'(categoria='Eletricista')}" title="Ver eletricistas">Eletricista</a>
+        <a class="chip" th:href="@{'/login'(categoria='Encanador')}" title="Ver encanadores">Encanador</a>
+        <a class="chip" th:href="@{'/login'(categoria='Pintor')}" title="Ver pintores">Pintor</a>
+        <a class="chip" th:href="@{'/login'(categoria='Carpinteiro')}" title="Ver carpinteiros">Carpinteiro</a>
+        <a class="chip" th:href="@{'/login'(categoria='Gesso e Drywall')}" title="Ver gesseiros e drywall">Gesso & Drywall</a>
+    </div>
+</section>
+
+<section class="market">
+    <h3 class="sec-title">Anúncios em destaque</h3>
+    <div class="cards">
+        <!-- Card exemplo 1 -->
+        <article class="card">
+            <div class="thumb"></div>
+            <div class="body">
+                <h4>Instalação elétrica residencial</h4>
+                <div class="meta">Profissional: <strong>Marcelo (Eletricista)</strong> • São Paulo/SP</div>
+                <div class="price">a partir de R$ 250</div>
+                <div class="tags">
+                    <span class="tag">Orçamento rápido</span>
+                    <span class="tag">Garantia 90 dias</span>
+                </div>
+            </div>
+            <div class="cta">
+                <a class="btn" th:href="@{'/login'(anuncio='instalacao-eletrica-residencial')}">Ver detalhes</a>
+                <a class="btn alt" th:href="@{'/clientes/cadastro'(anuncio='instalacao-eletrica-residencial')}">Solicitar</a>
+            </div>
+        </article>
+
+        <!-- Card exemplo 2 -->
+        <article class="card">
+            <div class="thumb"></div>
+            <div class="body">
+                <h4>Revitalização de pintura interna</h4>
+                <div class="meta">Profissional: <strong>Ana (Pintora)</strong> • Belo Horizonte/MG</div>
+                <div class="price">a partir de R$ 400</div>
+                <div class="tags">
+                    <span class="tag">Parcelado</span>
+                    <span class="tag">Tintas premium</span>
+                </div>
+            </div>
+            <div class="cta">
+                <a class="btn" th:href="@{'/login'(anuncio='revitalizacao-pintura-interna')}">Ver detalhes</a>
+                <a class="btn alt" th:href="@{'/clientes/cadastro'(anuncio='revitalizacao-pintura-interna')}">Solicitar</a>
+            </div>
+        </article>
+
+        <!-- Card exemplo 3 -->
+        <article class="card">
+            <div class="thumb"></div>
+            <div class="body">
+                <h4>Conserto de vazamentos</h4>
+                <div class="meta">Profissional: <strong>Rita (Encanadora)</strong> • Curitiba/PR</div>
+                <div class="price">a partir de R$ 180</div>
+                <div class="tags">
+                    <span class="tag">Emergência</span>
+                    <span class="tag">Avaliações 5★</span>
+                </div>
+            </div>
+            <div class="cta">
+                <a class="btn" th:href="@{'/login'(anuncio='conserto-de-vazamentos')}">Ver detalhes</a>
+                <a class="btn alt" th:href="@{'/clientes/cadastro'(anuncio='conserto-de-vazamentos')}">Solicitar</a>
+            </div>
+        </article>
+
+        <!-- Card exemplo 4 -->
+        <article class="card">
+            <div class="thumb"></div>
+            <div class="body">
+                <h4>Assentamento de pisos</h4>
+                <div class="meta">Profissional: <strong>Diego (Pedreiro)</strong> • Recife/PE</div>
+                <div class="price">a partir de R$ 35/m²</div>
+                <div class="tags">
+                    <span class="tag">Medição grátis</span>
+                    <span class="tag">Entrega rápida</span>
+                </div>
+            </div>
+            <div class="cta">
+                <a class="btn" th:href="@{'/login'(anuncio='assentamento-de-pisos')}">Ver detalhes</a>
+                <a class="btn alt" th:href="@{'/clientes/cadastro'(anuncio='assentamento-de-pisos')}">Solicitar</a>
+            </div>
+        </article>
+    </div>
+</section>
+
+<section class="testi">
+    <h3 class="sec-title">Quem já usa, recomenda</h3>
+    <div class="tgrid">
+        <div class="tcard">
+            <div class="who">Carlos • Cliente</div>
+            <div class="star">★★★★★</div>
+            <p>Encontrei um eletricista em minutos e o serviço ficou impecável. Recomendo!</p>
+        </div>
+        <div class="tcard">
+            <div class="who">Aline • Profissional</div>
+            <div class="star">★★★★★</div>
+            <p>Recebi leads qualificados e fechei 3 obras este mês. Excelente plataforma.</p>
+        </div>
+        <div class="tcard">
+            <div class="who">Marcos • Cliente</div>
+            <div class="star">★★★★★</div>
+            <p>Fácil de usar e com profissionais avaliados. Me deu muita confiança.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> ConstruaFácil — Todos os direitos reservados.
+</footer>
+
 </body>
 </html>

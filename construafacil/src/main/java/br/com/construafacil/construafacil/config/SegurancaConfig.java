@@ -8,6 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -39,10 +40,14 @@ public class SegurancaConfig {
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/",                 // <— libera a página inicial
+                                "/index",            // (se usar /index explicitamente)
                                 "/login",
                                 "/clientes/cadastro",
                                 "/profissionais/cadastro",
                                 "/css/**",
+                                "/js/**",
+                                "/images/**",
                                 "/h2-console/**"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -56,11 +61,15 @@ public class SegurancaConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        // permite fazer logout com GET (já que seus botões são <a href="/logout">)
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                        .logoutSuccessUrl("/")          // <— volta para a landing
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
                 .headers(headers -> headers.frameOptions().disable());
+
         return http.build();
     }
 }

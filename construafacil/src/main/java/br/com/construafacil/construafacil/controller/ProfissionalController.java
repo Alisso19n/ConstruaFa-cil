@@ -6,6 +6,7 @@ import br.com.construafacil.repository.ProfissionalRepository;
 import br.com.construafacil.repository.SolicitacaoRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,31 +21,41 @@ public class ProfissionalController {
     private final SolicitacaoRepository solicitacaoRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public ProfissionalController(
-            ProfissionalRepository profissionalRepository,
-            SolicitacaoRepository solicitacaoRepository,
-            PasswordEncoder passwordEncoder
-    ) {
+    public ProfissionalController(ProfissionalRepository profissionalRepository,
+                                  SolicitacaoRepository solicitacaoRepository,
+                                  PasswordEncoder passwordEncoder) {
         this.profissionalRepository = profissionalRepository;
         this.solicitacaoRepository = solicitacaoRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Formulário de cadastro de profissional
+    // GET do cadastro (exibe formulário)
     @GetMapping("/cadastro")
     public String exibirFormularioCadastro(Model model) {
         model.addAttribute("profissional", new Profissional());
         return "cadastro-profissionais";
     }
 
-    // Salva novo profissional
+    // POST do cadastro (processa formulário)
     @PostMapping("/cadastro")
-    public String cadastrarProfissional(@ModelAttribute Profissional profissional, Model model) {
-        profissional.setStatus("INATIVO"); // Aguarda aprovação do admin
+    public String cadastrarProfissional(@ModelAttribute("profissional") Profissional profissional, Model model) {
+        if (profissional.getSenha() == null || profissional.getSenha().isBlank()) {
+            model.addAttribute("erro", "Informe uma senha válida.");
+            return "cadastro-profissionais";
+        }
+        if (profissional.getEmail() == null || profissional.getEmail().isBlank()) {
+            model.addAttribute("erro", "Informe um e-mail válido.");
+            return "cadastro-profissionais";
+        }
+        if (profissionalRepository.findByEmail(profissional.getEmail()) != null) {
+            model.addAttribute("erro", "Já existe um profissional com esse e-mail.");
+            return "cadastro-profissionais";
+        }
+
+        profissional.setStatus("INATIVO"); // aguarda aprovação do admin
         profissional.setSenha(passwordEncoder.encode(profissional.getSenha()));
         profissionalRepository.save(profissional);
 
-        model.addAttribute("mensagem", "Cadastro realizado! Aguarde aprovação do administrador.");
         return "redirect:/login?aguardeAprovacao";
     }
 
@@ -53,13 +64,12 @@ public class ProfissionalController {
     public String painelProfissional(Model model, Principal principal) {
         Profissional profissional = profissionalRepository.findByEmail(principal.getName());
         List<Solicitacao> solicitacoes = solicitacaoRepository.findByProfissional(profissional);
-
         model.addAttribute("profissional", profissional);
         model.addAttribute("solicitacoes", solicitacoes);
         return "painel-profissional";
     }
 
-    // Formulário de edição de cadastro
+    // GET editar
     @GetMapping("/editar")
     public String editarProfissional(Model model, Principal principal) {
         Profissional profissional = profissionalRepository.findByEmail(principal.getName());
@@ -67,19 +77,19 @@ public class ProfissionalController {
         return "editar-profissional";
     }
 
-    // Processa a edição
+    // POST editar (não altera a senha aqui)
     @PostMapping("/editar")
-    public String salvarEdicaoProfissional(@ModelAttribute Profissional profissionalEditado, Principal principal) {
+    public String salvarEdicaoProfissional(@ModelAttribute("profissional") Profissional profissionalEditado,
+                                           Principal principal) {
         Profissional profissional = profissionalRepository.findByEmail(principal.getName());
         profissional.setNome(profissionalEditado.getNome());
         profissional.setTelefone(profissionalEditado.getTelefone());
         profissional.setProfissao(profissionalEditado.getProfissao());
-        // Se quiser permitir alteração de e-mail, precisa de validações extras!
         profissionalRepository.save(profissional);
         return "redirect:/profissionais/painel?editado";
     }
 
-    // Confirmação de exclusão
+    // GET confirmar exclusão
     @GetMapping("/excluir")
     public String confirmarExclusao(Model model, Principal principal) {
         Profissional profissional = profissionalRepository.findByEmail(principal.getName());
@@ -87,15 +97,15 @@ public class ProfissionalController {
         return "confirmar-exclusao-profissional";
     }
 
-    // Exclusão definitiva com remoção das solicitações associadas
+    // POST excluir (remove solicitações -> remove profissional)
     @PostMapping("/excluir")
+    @Transactional
     public String excluirProfissional(Principal principal) {
         Profissional profissional = profissionalRepository.findByEmail(principal.getName());
         if (profissional != null) {
-            // Exclui todas as solicitações do profissional antes
-            List<Solicitacao> solicitacoes = solicitacaoRepository.findByProfissional(profissional);
-            solicitacaoRepository.deleteAll(solicitacoes);
-            // Agora deleta o profissional
+            // apaga todas as solicitações vinculadas a este profissional
+            solicitacaoRepository.deleteByProfissional(profissional);
+            // agora apaga o profissional
             profissionalRepository.delete(profissional);
         }
         return "redirect:/logout";
