@@ -2,31 +2,51 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Profissional | ConstruaFácil</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Profissional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { background: linear-gradient(135deg, #eaf6fb 0%, #d5ecfa 100%); font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; margin: 0; display: flex; align-items: center; justify-content: center;}
-        .cadastro-box { background: #fff; border-radius: 18px; box-shadow: 0 6px 30px rgba(44,160,255,0.15); padding: 38px 30px 28px 30px; width: 100%; max-width: 400px; text-align: center;}
-        .titulo { font-size: 1.5em; color: #3498db; font-weight: bold; margin-bottom: 22px;}
-        input[type="text"], input[type="email"], input[type="tel"], input[type="password"] { width: 100%; padding: 12px 10px; margin-bottom: 18px; border: 1px solid #c7e5f8; border-radius: 7px; font-size: 1em;}
-        button { width: 100%; padding: 12px; border: none; border-radius: 7px; background-color: #3498db; color: #fff; font-size: 1.1em; font-weight: bold; letter-spacing: 1px; box-shadow: 0 2px 12px rgba(52,152,219,0.07); transition: background 0.2s; cursor: pointer;}
-        button:hover { background-color: #217dbb;}
-        .voltar-link { display: block; margin-top: 18px; font-size: 1em; color: #3498db; text-decoration: none;}
-        .voltar-link:hover { color: #217dbb;}
+        :root{ --brand:#2c7be5; --ink:#233142; --line:#e8eef7; --bg:#f3f8fe }
+        body{ font-family:Segoe UI, Arial, sans-serif; margin:0; background:var(--bg); color:var(--ink) }
+        .wrap{ max-width:640px; margin:24px auto; padding:0 12px }
+        .card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px }
+        .row{ display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap }
+        label{ font-weight:600; color:#245b8a }
+        input{ width:100%; padding:10px; border:1px solid #d7e7fb; border-radius:8px }
+        .actions{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap }
+        .btn{ padding:10px 14px; border-radius:10px; border:1px solid #cfe3ff; background:#fff; cursor:pointer; text-decoration:none; color:var(--ink); font-weight:600 }
+        .btn.primary{ background:var(--brand); border-color:var(--brand); color:#fff }
     </style>
 </head>
 <body>
-<div class="cadastro-box">
-    <div class="titulo">Editar Dados do Profissional</div>
-    <form th:action="@{/profissionais/editar}" th:object="${profissional}" method="post">
-        <input type="text" th:field="*{nome}" placeholder="Nome completo" required>
-        <input type="email" th:field="*{email}" placeholder="E-mail" required readonly>
-        <input type="tel" th:field="*{telefone}" placeholder="Telefone" required>
-        <input type="text" th:field="*{profissao}" placeholder="Profissão" required>
-        <!-- Adicione outros campos editáveis se quiser -->
-        <button type="submit">Salvar Alterações</button>
-    </form>
-    <a th:href="@{/profissionais/painel}" class="voltar-link">Cancelar</a>
+<div class="wrap">
+    <div class="card">
+        <h2>Editar Perfil (Profissional)</h2>
+        <form th:action="@{/profissionais/editar}" method="post" th:object="${profissional}">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <div class="row">
+                <label>Nome</label>
+                <input type="text" th:field="*{nome}" required />
+            </div>
+            <div class="row">
+                <label>E-mail</label>
+                <input type="email" th:field="*{email}" required />
+            </div>
+            <div class="row">
+                <label>Telefone</label>
+                <input type="text" th:field="*{telefone}" />
+            </div>
+            <div class="row">
+                <label>Profissão</label>
+                <input type="text" th:field="*{profissao}" />
+            </div>
+            <div class="actions">
+                <button class="btn primary" type="submit">Salvar</button>
+                <a class="btn" th:href="@{/profissionais/painel}">Voltar ao painel</a>
+                <a class="btn" th:href="@{/}">Página inicial</a>
+                <a class="btn" th:href="@{/login}">Login</a>
+            </div>
+        </form>
+    </div>
 </div>
 </body>
 </html>

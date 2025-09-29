@@ -1,74 +1,122 @@
-package br.com.construafacil.config;
+package br.com.construafacil.construafacil.config;
 
 import br.com.construafacil.service.CustomAuthenticationSuccessHandler;
 import br.com.construafacil.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;   // <<< AQUI
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import java.util.List;
+
 @Configuration
-@EnableWebSecurity
 public class SegurancaConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final CustomAuthenticationSuccessHandler successHandler;
 
-    public SegurancaConfig(
-            CustomUserDetailsService customUserDetailsService,
-            CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler
-    ) {
+    public SegurancaConfig(CustomUserDetailsService customUserDetailsService,
+                           CustomAuthenticationSuccessHandler successHandler) {
         this.customUserDetailsService = customUserDetailsService;
-        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
+        this.successHandler = successHandler;
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(customUserDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
+    public PasswordEncoder passwordEncoder() {
+        // Agora usamos BCrypt (seguro)
+        return new BCryptPasswordEncoder();
+    }
+
+    // ADMIN em memória (para não perder acesso ao painel)
+    @Bean
+    public InMemoryUserDetailsManager inMemoryUserDetailsManager(PasswordEncoder encoder) {
+        UserDetails admin = User.builder()
+                .username("admin@local")
+                .password(encoder.encode("123")) // senha "123" com BCrypt
+                .roles("ADMIN")
+                .build();
+        return new InMemoryUserDetailsManager(admin);
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider) throws Exception {
+    public DaoAuthenticationProvider daoProviderBanco(PasswordEncoder encoder) {
+        DaoAuthenticationProvider p = new DaoAuthenticationProvider();
+        p.setUserDetailsService(customUserDetailsService);
+        p.setPasswordEncoder(encoder);
+        return p;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoProviderMemoria(PasswordEncoder encoder,
+                                                        InMemoryUserDetailsManager inMemory) {
+        DaoAuthenticationProvider p = new DaoAuthenticationProvider();
+        p.setUserDetailsService(inMemory);
+        p.setPasswordEncoder(encoder);
+        return p;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(DaoAuthenticationProvider daoProviderBanco,
+                                                       DaoAuthenticationProvider daoProviderMemoria) {
+        return new ProviderManager(List.of(daoProviderBanco, daoProviderMemoria));
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           AuthenticationManager authManager) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .authenticationProvider(authenticationProvider)
+                .authenticationManager(authManager)
                 .authorizeHttpRequests(auth -> auth
+                        // PÚBLICO
+                        .requestMatchers(HttpMethod.GET, "/", "/index", "/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/catalogo", "/catalogo/**").permitAll()
+                        .requestMatchers("/login").permitAll()
+
+                        // CADASTROS/ATALHOS PÚBLICOS
                         .requestMatchers(
-                                "/",                 // <— libera a página inicial
-                                "/index",            // (se usar /index explicitamente)
-                                "/login",
-                                "/clientes/cadastro",
-                                "/profissionais/cadastro",
-                                "/css/**",
-                                "/js/**",
-                                "/images/**",
-                                "/h2-console/**"
+                                "/clientes/cadastro", "/profissionais/cadastro",
+                                "/cliente/cadastro", "/profissional/cadastro",
+                                "/cadastro", "/cadastro/**",
+                                "/cadastro-cliente", "/cadastro-cliente/**",
+                                "/cadastro-profissional", "/cadastro-profissionais", "/cadastro-profissionais/**",
+                                "/sou-cliente", "/quero-ser-cliente",
+                                "/sou-profissional", "/quero-ser-profissional"
                         ).permitAll()
+
+                        // ESTÁTICOS e H2
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/assets/**", "/webjars/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+
+                        // ÁREAS PROTEGIDAS
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/profissionais/**").hasRole("PROFISSIONAL")
-                        .requestMatchers("/clientes/**").hasRole("CLIENTE")
+                        .requestMatchers("/clientes/**").authenticated()
+                        .requestMatchers("/profissionais/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .successHandler(customAuthenticationSuccessHandler)
-                        .permitAll()
+                        .loginPage("/login").permitAll()
+                        .successHandler(successHandler)
                 )
                 .logout(logout -> logout
-                        // permite fazer logout com GET (já que seus botões são <a href="/logout">)
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                        .logoutSuccessUrl("/")          // <— volta para a landing
+                        .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-                .headers(headers -> headers.frameOptions().disable());
+                .csrf(csrf -> csrf.disable())
+                .headers(h -> h.frameOptions(f -> f.disable()));
 
         return http.build();
     }

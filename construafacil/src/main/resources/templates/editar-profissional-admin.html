@@ -2,41 +2,38 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Editar Profissional | Admin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Profissional (Admin)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { background: linear-gradient(135deg, #eaf6fb 0%, #d5ecfa 100%); font-family: 'Segoe UI', Arial, sans-serif; }
-    .painel { max-width: 450px; margin: 32px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 22px rgba(44,160,255,0.13); padding: 34px 22px 26px 22px; }
-    .titulo { font-size: 1.2em; color: #3498db; font-weight: bold; margin-bottom: 18px; text-align: center; }
-    input[type="text"], input[type="email"], input[type="tel"] {
-        width: 100%; padding: 12px 10px; margin-bottom: 14px;
-        border: 1px solid #c7e5f8; border-radius: 7px; font-size: 1em;
-    }
-    select { width: 100%; padding: 12px 10px; margin-bottom: 14px; border: 1px solid #c7e5f8; border-radius: 7px; font-size: 1em; }
-    button { width: 100%; padding: 12px; border: none; border-radius: 7px; background-color: #3498db; color: #fff; font-size: 1.1em; font-weight: bold; }
-    button:hover { background-color: #217dbb; }
-    a { display: block; text-align: center; margin-top: 16px; color: #217dbb; text-decoration: none;}
+    :root{ --brand:#2c7be5; --ink:#233142; --line:#e8eef7; --bg:#f3f8fe }
+    body{ font-family:Segoe UI, Arial, sans-serif; margin:0; background:var(--bg); color:var(--ink) }
+    .wrap{ max-width:720px; margin:24px auto; padding:0 12px }
+    .card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px }
+    .row{ display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap }
+    label{ font-weight:600; color:#245b8a }
+    input{ width:100%; padding:10px; border:1px solid #d7e7fb; border-radius:8px }
+    .actions{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap }
+    .btn{ padding:10px 14px; border-radius:10px; border:1px solid #cfe3ff; background:#fff; cursor:pointer; text-decoration:none; color:var(--ink); font-weight:600 }
+    .btn.primary{ background:var(--brand); border-color:var(--brand); color:#fff }
   </style>
 </head>
 <body>
-<div class="painel">
-  <div class="titulo">Editar Profissional</div>
-  <form th:action="@{/admin/editar-profissional/{id}(id=${profissional.id})}" th:object="${profissional}" method="post">
-    <input type="hidden" th:field="*{id}" />
-    <input type="text" th:field="*{nome}" placeholder="Nome" required>
-    <input type="email" th:field="*{email}" placeholder="E-mail" required>
-    <input type="tel" th:field="*{telefone}" placeholder="Telefone" required>
-    <select th:field="*{profissao}" required>
-      <option value="" disabled>Selecione a profissão</option>
-      <option value="Pedreiro">Pedreiro</option>
-      <option value="Eletricista">Eletricista</option>
-      <option value="Encanador">Encanador</option>
-      <option value="Pintor">Pintor</option>
-      <option value="Carpinteiro">Carpinteiro</option>
-    </select>
-    <button type="submit">Salvar Alterações</button>
-  </form>
-  <a th:href="@{/admin/painel}">Voltar ao Painel</a>
+<div class="wrap">
+  <div class="card">
+    <h2>Editar Profissional (Admin)</h2>
+    <form th:action="@{|/admin/editar-profissional/${profissional.id}|}" method="post" th:object="${profissional}">
+      <div class="row"><label>Nome</label><input th:field="*{nome}" required></div>
+      <div class="row"><label>E-mail</label><input th:field="*{email}" required></div>
+      <div class="row"><label>Telefone</label><input th:field="*{telefone}"></div>
+      <div class="row"><label>Profissão</label><input th:field="*{profissao}"></div>
+      <div class="actions">
+        <button class="btn primary" type="submit">Salvar</button>
+        <a class="btn" th:href="@{/admin/painel}">Voltar ao painel</a>
+        <a class="btn" th:href="@{/}">Página inicial</a>
+        <a class="btn" th:href="@{/login}">Login</a>
+      </div>
+    </form>
+  </div>
 </div>
 </body>
 </html>

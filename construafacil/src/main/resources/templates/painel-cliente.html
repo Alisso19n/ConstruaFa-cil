@@ -2,174 +2,108 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Painel do Cliente | ConstruaFácil</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Painel do Cliente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body {
-            background: linear-gradient(135deg, #eaf6fb 0%, #d5ecfa 100%);
-            font-family: 'Segoe UI', Arial, sans-serif;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .painel {
-            max-width: 720px;
-            margin: 30px auto;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 22px rgba(44,160,255,0.13);
-            padding: 34px 26px 26px 26px;
-        }
-        .titulo {
-            font-size: 1.5em;
-            color: #3498db;
-            font-weight: bold;
-            margin-bottom: 18px;
-            text-align: center;
-        }
-        .infos {
-            text-align: center;
-            margin-bottom: 22px;
-            color: #555;
-            word-break: break-word;
-        }
-        .msg-feedback {
-            text-align: center;
-            margin-bottom: 18px;
-            font-weight: 500;
-            font-size: 1em;
-            color: #27ae60;
-        }
-        .acoes-perfil {
-            text-align: center;
-            margin-bottom: 18px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-        .botao {
-            display: inline-block;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 7px;
-            background-color: #3498db;
-            color: #fff;
-            font-size: 1em;
-            font-weight: bold;
-            text-decoration: none;
-            transition: background 0.2s;
-            cursor: pointer;
-        }
-        .editar { background: #27ae60; }
-        .editar:hover { background: #1e8449; }
-        .excluir { background: #e74c3c; }
-        .excluir:hover { background: #c0392b; }
-        .botao:hover { background-color: #217dbb; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 18px;
-            font-size: 1em;
-        }
-        th, td {
-            border-bottom: 1px solid #e3e3e3;
-            padding: 10px 6px;
-            text-align: left;
-        }
-        th {
-            background: #e3f3fb;
-            color: #2980b9;
-            font-weight: 600;
-        }
-        /* RESPONSIVO: celular ou tela pequena */
-        @media (max-width: 700px) {
-            .painel {
-                padding: 10px 2vw 20px 2vw;
-                max-width: 99vw;
-            }
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
-            thead tr {
-                display: none;
-            }
-            tbody tr {
-                margin-bottom: 20px;
-                border-radius: 8px;
-                box-shadow: 0 2px 12px rgba(44,160,255,0.06);
-                background: #f9fbfc;
-                padding: 10px 0;
-            }
-            td {
-                position: relative;
-                padding-left: 48%;
-                min-height: 38px;
-                border: none;
-                border-bottom: 1px solid #e3e3e3;
-                margin-bottom: 6px;
-            }
-            td:before {
-                position: absolute;
-                top: 10px;
-                left: 8px;
-                width: 45%;
-                padding-right: 6px;
-                white-space: nowrap;
-                color: #2980b9;
-                font-weight: 600;
-                font-size: 0.97em;
-            }
-            td:nth-of-type(1):before { content: "Profissional"; }
-            td:nth-of-type(2):before { content: "Descrição"; }
-            td:nth-of-type(3):before { content: "Data"; }
-            td:nth-of-type(4):before { content: "Status"; }
-            .acoes-perfil {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
+        :root{ --brand:#2c7be5; --brand2:#3498db; --danger:#e74c3c; --ink:#233142; --bg:#f3f8fe; --line:#e8eef7 }
+        *{box-sizing:border-box}
+        body{ font-family:Segoe UI, Arial, sans-serif; margin:0; background:var(--bg); color:var(--ink) }
+        .wrap{ max-width:980px; margin:20px auto; padding:0 12px }
+        h1{ color:var(--brand2); margin-bottom:10px }
+        .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin:12px 0 16px }
+        .btn{ padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; text-decoration:none; color:var(--ink); font-weight:600 }
+        .btn.primary{ background:var(--brand2); border-color:var(--brand2); color:#fff }
+        .btn.alt{ background:#fff; border-color:var(--brand2); color:var(--brand2) }
+        .btn.ghost{ background:#fff }
+        .btn.danger{ background:var(--danger); border-color:var(--danger); color:#fff }
+        .btn.sm{ padding:8px 12px; }
+        .card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:16px }
+        table{ width:100%; border-collapse:collapse; table-layout:fixed }
+        th,td{ padding:10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top }
+        th{ background:#eaf4ff; color:#245b8a }
+        .badge{ display:inline-block; padding:4px 8px; border-radius:999px; font-size:.82rem; background:#eef6ff; border:1px solid #dfefff }
+        .actions{ display:flex; flex-wrap:wrap; gap:8px }
+        .pager{ display:flex; justify-content:center; gap:8px; margin:14px 0 }
+        .pager a, .pager .badge{ padding:6px 10px; border:1px solid var(--line); border-radius:8px; text-decoration:none; color:var(--ink); background:#fff }
+        .pager a.disabled{ pointer-events:none; opacity:.45 }
+        .flash{ margin:10px 0; padding:10px 12px; border-radius:10px; border:1px solid #cfe3ff; background:#f3f9ff; color:#205081 }
     </style>
 </head>
 <body>
-<div class="painel">
-    <div class="titulo">Painel do Cliente</div>
-    <div class="infos">
-        Olá, <span th:text="${cliente.nome}">Nome Cliente</span>!<br>
-        <span th:text="${cliente.email}">email@cliente.com</span> |
-        <span th:text="${cliente.telefone}">(00) 00000-0000</span>
-    </div>
-    <!-- Feedback de ações -->
-    <div th:if="${param.editado}" class="msg-feedback">Seus dados foram atualizados com sucesso!</div>
-    <div th:if="${param.excluido}" class="msg-feedback" style="color: #c0392b;">Conta excluída com sucesso!</div>
-    <div class="acoes-perfil">
-        <a class="botao editar" th:href="@{/clientes/editar}">Editar Perfil</a>
-        <a class="botao excluir" th:href="@{/clientes/excluir}">Excluir Conta</a>
-        <a class="botao" th:href="@{/solicitacoes/nova}">Solicitar Serviço</a>
-        <a class="botao" th:href="@{/logout}" style="background:#c0392b;">Sair</a>
+<div class="wrap">
+    <h1 th:text="'Bem-vindo, ' + ${cliente.nome}">Painel do Cliente</h1>
+
+    <!-- flashes simples via querystring -->
+    <div class="flash" th:if="${param.ok}" th:text="${'Ação realizada: ' + param.ok[0]}"></div>
+
+    <div class="toolbar">
+        <a class="btn primary" th:href="@{/clientes/solicitar}">➕ Solicitar serviço</a>
+        <a class="btn alt" th:href="@{/clientes/editar}">✏️ Editar perfil</a>
+        <form th:action="@{/clientes/excluir}" method="post" style="display:inline;"
+              onsubmit="return confirmarExclusao();">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn danger">🗑️ Excluir conta</button>
+        </form>
+        <span style="flex:1"></span>
+        <a class="btn ghost" th:href="@{/}">🏠 Início</a>
+        <a class="btn ghost" th:href="@{/login}">🔐 Login</a>
+        <a class="btn ghost" th:href="@{/logout}">🚪 Sair</a>
     </div>
 
-    <h3 style="margin-top: 34px; color: #217dbb;">Minhas Solicitações</h3>
-    <table>
-        <thead>
-        <tr>
-            <th>Profissional</th>
-            <th>Descrição</th>
-            <th>Data</th>
-            <th>Status</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="solicitacao : ${solicitacoes}">
-            <td th:text="${solicitacao.profissional != null ? solicitacao.profissional.nome : '-'}">Profissional</td>
-            <td th:text="${solicitacao.descricao}">Descrição</td>
-            <td th:text="${#temporals.format(solicitacao.dataSolicitacao, 'dd/MM/yyyy HH:mm')}">01/07/2025</td>
-            <td th:text="${solicitacao.status}">PENDENTE</td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(solicitacoes)}">
-            <td colspan="4" style="text-align: center;">Nenhuma solicitação encontrada.</td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="card">
+        <h3>Minhas Solicitações</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Profissional</th>
+                <th>Descrição</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th style="width:210px;">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${solicitacoes.content}">
+                <td th:text="${s.profissional != null ? s.profissional.nome : '-'}">Profissional</td>
+                <td th:text="${s.descricao}">Descrição</td>
+                <td th:text="${#temporals.format(s.dataSolicitacao,'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+                <td><span class="badge" th:text="${s.status}">PENDENTE</span></td>
+                <td>
+                    <div class="actions" th:if="${s.status == null || #strings.equalsIgnoreCase(s.status,'PENDENTE')}">
+                        <form th:action="@{|/clientes/solicitacoes/${s.id}/cancelar|}" method="post" style="display:inline;">
+                            <input type="hidden" name="page" th:value="${solicitacoes.number}" />
+                            <input type="hidden" name="size" th:value="${size}" />
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn sm danger">Cancelar</button>
+                        </form>
+                    </div>
+                    <div th:if="${s.status != null && !#strings.equalsIgnoreCase(s.status,'PENDENTE')}">
+                        <em>Sem ações.</em>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(solicitacoes.content)}">
+                <td colspan="5" style="text-align:center;">Nenhuma solicitação encontrada.</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav class="pager" th:if="${solicitacoes.totalPages > 1}">
+            <a th:classappend="${solicitacoes.first} ? 'disabled'"
+               th:href="@{/clientes/painel(page=${solicitacoes.number-1},size=${size})}">« Anterior</a>
+            <span class="badge">Página <b th:text="${solicitacoes.number+1}">1</b> de <b th:text="${solicitacoes.totalPages}">1</b></span>
+            <a th:classappend="${solicitacoes.last} ? 'disabled'"
+               th:href="@{/clientes/painel(page=${solicitacoes.number+1},size=${size})}">Próximo »</a>
+        </nav>
+    </div>
 </div>
+
+<script>
+    function confirmarExclusao(){
+      const p1 = confirm('Tem certeza que deseja excluir sua conta?');
+      if(!p1) return false;
+      return confirm('⚠️ Esta ação é irreversível. Confirme novamente para excluir.');
+    }
+</script>
 </body>
 </html>

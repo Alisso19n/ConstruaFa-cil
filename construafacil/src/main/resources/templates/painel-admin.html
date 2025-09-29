@@ -2,197 +2,246 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Painel do Admin | ConstruaFácil</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Painel Administrativo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { background: linear-gradient(135deg, #eaf6fb 0%, #d5ecfa 100%); font-family: 'Segoe UI', Arial, sans-serif; }
-    .painel { max-width: 1100px; margin: 30px auto; background: #fff; border-radius: 18px; box-shadow: 0 4px 22px rgba(44,160,255,0.13); padding: 36px 28px 26px 28px; }
-    .titulo { font-size: 1.8em; color: #3498db; font-weight: bold; margin-bottom: 18px; text-align: center; }
-    h3 { color: #217dbb; margin-top: 28px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border-bottom: 1px solid #e3e3e3; padding: 10px 6px; text-align: left; font-size: 1em; }
-    th { background: #e3f3fb; color: #2980b9; font-weight: 600; }
-    .botao { display: inline-block; margin-bottom: 8px; padding: 7px 16px; border: none; border-radius: 7px; background-color: #3498db; color: #fff; font-size: 1em; font-weight: bold; text-decoration: none; transition: background 0.2s; cursor: pointer;}
-    .botao:hover { background-color: #217dbb; }
-    .aprovar { background-color: #27ae60;}
-    .aprovar:hover { background-color: #219150;}
-    .recusar { background-color: #e74c3c;}
-    .recusar:hover { background-color: #c0392b;}
-    .editar { background-color: #f7b731; color: #fff;}
-    .editar:hover { background-color: #e0a106;}
-    .excluir { background-color: #b71c1c; color: #fff;}
-    .excluir:hover { background-color: #7f0000;}
-
-    @media (max-width: 900px) {
-      .painel { padding: 6px 2vw 12px 2vw; max-width: 99vw; }
-      th, td { font-size: 0.98em; }
-    }
-
-    /* Responsividade real para celular */
-    @media (max-width: 700px) {
-      table, thead, tbody, th, td, tr { display: block; }
-      thead tr { display: none; }
-      tbody tr {
-        margin-bottom: 20px;
-        background: #f8fbfd;
-        border-radius: 10px;
-        box-shadow: 0 1px 7px rgba(44,160,255,0.06);
-        padding: 8px 0;
-      }
-      td {
-        position: relative;
-        padding-left: 52%;
-        border: none;
-        border-bottom: 1px solid #e3e3e3;
-        margin-bottom: 4px;
-        min-height: 36px;
-      }
-      td:before {
-        position: absolute;
-        top: 10px;
-        left: 8px;
-        width: 48%;
-        font-weight: bold;
-        color: #2980b9;
-        white-space: nowrap;
-      }
-      /* Títulos dinâmicos por tabela */
-      /* Clientes */
-      tbody tr td:nth-of-type(1):before { content: "Nome"; }
-      tbody tr td:nth-of-type(2):before { content: "Email"; }
-      tbody tr td:nth-of-type(3):before { content: "Telefone"; }
-      tbody tr td:nth-of-type(4):before { content: "Status"; }
-      tbody tr td:nth-of-type(5):before { content: "Ações"; }
-      /* Profissionais */
-      tbody tr td:nth-of-type(6):before { content: "Profissão"; }
-      /* Solicitações */
-      /* Será ajustado no bloco de baixo */
-
-      .botao { width: 100%; margin-bottom: 7px; margin-right: 0; }
-    }
-    /* Responsividade para a tabela de profissionais */
-    @media (max-width: 700px) {
-      /* Profissionais */
-      table.profissionais tbody tr td:nth-of-type(1):before { content: "Nome"; }
-      table.profissionais tbody tr td:nth-of-type(2):before { content: "Email"; }
-      table.profissionais tbody tr td:nth-of-type(3):before { content: "Telefone"; }
-      table.profissionais tbody tr td:nth-of-type(4):before { content: "Profissão"; }
-      table.profissionais tbody tr td:nth-of-type(5):before { content: "Status"; }
-      table.profissionais tbody tr td:nth-of-type(6):before { content: "Ações"; }
-      /* Solicitações */
-      table.solicitacoes tbody tr td:nth-of-type(1):before { content: "Cliente"; }
-      table.solicitacoes tbody tr td:nth-of-type(2):before { content: "Profissional"; }
-      table.solicitacoes tbody tr td:nth-of-type(3):before { content: "Descrição"; }
-      table.solicitacoes tbody tr td:nth-of-type(4):before { content: "Data"; }
-      table.solicitacoes tbody tr td:nth-of-type(5):before { content: "Status"; }
-    }
+    :root{ --brand:#2c7be5; --brand2:#3498db; --danger:#e74c3c; --ink:#233142; --bg:#f3f8fe; --line:#e8eef7; --ok:#27ae60 }
+    *{box-sizing:border-box}
+    body{ font-family:Segoe UI, Arial, sans-serif; margin:0; background:var(--bg); color:var(--ink) }
+    .wrap{ max-width:1100px; margin:20px auto; padding:0 12px }
+    h1{ color:var(--brand2); margin:0 0 10px }
+    .toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 18px }
+    .btn{ padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; text-decoration:none; color:var(--ink); font-weight:600 }
+    .btn.primary{ background:var(--brand2); border-color:var(--brand2); color:#fff }
+    .btn.alt{ background:#fff; border-color:var(--brand2); color:var(--brand2) }
+    .btn.ok{ background:var(--ok); border-color:var(--ok); color:#fff }
+    .btn.warn{ background:#ffb020; border-color:#ffb020; color:#1b1b1b }
+    .btn.danger{ background:var(--danger); border-color:var(--danger); color:#fff }
+    .btn.sm{ padding:8px 12px }
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px }
+    .tab{ padding:8px 12px; border-radius:999px; background:#fff; border:1px solid var(--line); color:#355c8a; text-decoration:none }
+    .grid{ display:grid; gap:14px; grid-template-columns:1fr }
+    .card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px }
+    h3{ margin:0 0 10px; color:#245b8a }
+    table{ width:100%; border-collapse:collapse; table-layout:fixed }
+    th,td{ padding:10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top }
+    th{ background:#eaf4ff; color:#245b8a }
+    .badge{ display:inline-block; padding:4px 8px; border-radius:999px; font-size:.82rem; background:#eef6ff; border:1px solid #dfefff }
+    .actions{ display:flex; gap:8px; flex-wrap:wrap }
+    .pager{ display:flex; justify-content:center; gap:8px; margin:12px 0 0 }
+    .pager a, .pager .badge{ padding:6px 10px; border:1px solid var(--line); border-radius:8px; text-decoration:none; color:#233142; background:#fff }
+    .pager a.disabled{ pointer-events:none; opacity:.45 }
+    .sizes{ display:flex; gap:6px; align-items:center; font-size:.92rem; color:#355c8a; margin-top:8px }
+    .sizes input{ width:60px; padding:6px 8px; border:1px solid #d7e7fb; border-radius:8px }
+    @media (max-width:800px){ .actions{ gap:6px } .btn.sm{ padding:6px 10px } }
   </style>
 </head>
 <body>
-<div class="painel">
-  <div class="titulo">Painel do Administrador</div>
+<div class="wrap">
+  <h1>Painel Administrativo</h1>
 
-  <h3>Clientes</h3>
-  <table>
-    <thead>
-    <tr>
-      <th>Nome</th>
-      <th>Email</th>
-      <th>Telefone</th>
-      <th>Status</th>
-      <th>Ações</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="cliente : ${clientes}">
-      <td th:text="${cliente.nome}">Nome</td>
-      <td th:text="${cliente.email}">Email</td>
-      <td th:text="${cliente.telefone}">Telefone</td>
-      <td th:text="${cliente.status}">Status</td>
-      <td>
-        <form th:action="@{/admin/aprovar-cliente/{id}(id=${cliente.id})}" method="post" th:if="${cliente.status != 'ATIVO'}" style="display:inline;">
-          <button type="submit" class="botao aprovar">Aprovar</button>
-        </form>
-        <form th:action="@{/admin/recusar-cliente/{id}(id=${cliente.id})}" method="post" th:if="${cliente.status != 'ATIVO'}" style="display:inline;">
-          <button type="submit" class="botao recusar">Recusar</button>
-        </form>
-        <a th:href="@{/admin/editar-cliente/{id}(id=${cliente.id})}" class="botao editar">Editar</a>
-        <form th:action="@{/admin/excluir-cliente/{id}(id=${cliente.id})}" method="post" style="display:inline;">
-          <button type="submit" class="botao excluir">Excluir</button>
-        </form>
-      </td>
-    </tr>
-    <tr th:if="${#lists.isEmpty(clientes)}">
-      <td colspan="5" style="text-align:center;">Nenhum cliente cadastrado.</td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="toolbar">
+    <a class="btn" th:href="@{/}">🏠 Início</a>
+    <a class="btn" th:href="@{/login}">🔐 Login</a>
+    <a class="btn" th:href="@{/logout}">🚪 Sair</a>
+  </div>
 
-  <h3>Profissionais</h3>
-  <table class="profissionais">
-    <thead>
-    <tr>
-      <th>Nome</th>
-      <th>Email</th>
-      <th>Telefone</th>
-      <th>Profissão</th>
-      <th>Status</th>
-      <th>Ações</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="profissional : ${profissionais}">
-      <td th:text="${profissional.nome}">Nome</td>
-      <td th:text="${profissional.email}">Email</td>
-      <td th:text="${profissional.telefone}">Telefone</td>
-      <td th:text="${profissional.profissao}">Profissão</td>
-      <td th:text="${profissional.status}">Status</td>
-      <td>
-        <form th:action="@{/admin/aprovar-profissional/{id}(id=${profissional.id})}" method="post" th:if="${profissional.status != 'ATIVO'}" style="display:inline;">
-          <button type="submit" class="botao aprovar">Aprovar</button>
-        </form>
-        <form th:action="@{/admin/recusar-profissional/{id}(id=${profissional.id})}" method="post" th:if="${profissional.status != 'ATIVO'}" style="display:inline;">
-          <button type="submit" class="botao recusar">Recusar</button>
-        </form>
-        <a th:href="@{/admin/editar-profissional/{id}(id=${profissional.id})}" class="botao editar">Editar</a>
-        <form th:action="@{/admin/excluir-profissional/{id}(id=${profissional.id})}" method="post" style="display:inline;">
-          <button type="submit" class="botao excluir">Excluir</button>
-        </form>
-      </td>
-    </tr>
-    <tr th:if="${#lists.isEmpty(profissionais)}">
-      <td colspan="6" style="text-align:center;">Nenhum profissional cadastrado.</td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="tabs">
+    <a href="#profissionais" class="tab">Profissionais</a>
+    <a href="#clientes" class="tab">Clientes</a>
+    <a href="#solicitacoes" class="tab">Solicitações</a>
+  </div>
 
-  <h3>Solicitações de Serviço</h3>
-  <table class="solicitacoes">
-    <thead>
-    <tr>
-      <th>Cliente</th>
-      <th>Profissional</th>
-      <th>Descrição</th>
-      <th>Data</th>
-      <th>Status</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="solicitacao : ${solicitacoes}">
-      <td th:text="${solicitacao.cliente != null ? solicitacao.cliente.nome : '-'}">Cliente</td>
-      <td th:text="${solicitacao.profissional != null ? solicitacao.profissional.nome : '-'}">Profissional</td>
-      <td th:text="${solicitacao.descricao}">Descrição</td>
-      <td th:text="${#temporals.format(solicitacao.dataSolicitacao, 'dd/MM/yyyy HH:mm')}">01/07/2025</td>
-      <td th:text="${solicitacao.status}">PENDENTE</td>
-    </tr>
-    <tr th:if="${#lists.isEmpty(solicitacoes)}">
-      <td colspan="5" style="text-align:center;">Nenhuma solicitação registrada.</td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="grid">
 
-  <div style="text-align:center; margin-top:30px;">
-    <a class="botao" th:href="@{/logout}" style="background:#c0392b;">Sair</a>
+    <!-- =================== PROFISSIONAIS =================== -->
+    <div class="card" id="profissionais">
+      <h3>Profissionais</h3>
+      <table>
+        <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>Profissão</th>
+          <th>Status</th>
+          <th style="width:320px;">Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${profissionaisPage.content}">
+          <td th:text="${p.nome}">Nome</td>
+          <td th:text="${p.email}">email</td>
+          <td th:text="${p.telefone}">tel</td>
+          <td th:text="${p.profissao}">profissao</td>
+          <td><span class="badge" th:text="${p.status}">INATIVO</span></td>
+          <td class="actions">
+            <form th:if="${p.status != null && !#strings.equalsIgnoreCase(p.status,'ATIVO')}"
+                  th:action="@{|/admin/aprovar-profissional/${p.id}|}" method="post">
+              <input type="hidden" name="pageP" th:value="${profissionaisPage.number}" />
+              <input type="hidden" name="sizeP" th:value="${sizeP}" />
+              <button class="btn sm ok" type="submit">Aprovar</button>
+            </form>
+            <a class="btn sm alt" th:href="@{|/admin/editar-profissional/${p.id}|}">Editar</a>
+            <form th:action="@{|/admin/recusar-profissional/${p.id}|}" method="post"
+                  onsubmit="return confirm('Recusar este cadastro? Isso removerá o profissional e suas solicitações.');">
+              <input type="hidden" name="pageP" th:value="${profissionaisPage.number}" />
+              <input type="hidden" name="sizeP" th:value="${sizeP}" />
+              <button class="btn sm warn" type="submit">Recusar</button>
+            </form>
+            <form th:action="@{|/admin/excluir-profissional/${p.id}|}" method="post"
+                  onsubmit="return confirm('Excluir definitivamente? Esta ação é irreversível.');">
+              <input type="hidden" name="pageP" th:value="${profissionaisPage.number}" />
+              <input type="hidden" name="sizeP" th:value="${sizeP}" />
+              <button class="btn sm danger" type="submit">Excluir</button>
+            </form>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(profissionaisPage.content)}">
+          <td colspan="6" style="text-align:center">Nenhum profissional encontrado.</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="sizes">
+        Itens por página:
+        <form th:action="@{/admin/painel}" method="get">
+          <input type="hidden" name="pageC" th:value="${0}" />
+          <input type="hidden" name="sizeC" th:value="${sizeC}" />
+          <input type="hidden" name="pageS" th:value="${0}" />
+          <input type="hidden" name="sizeS" th:value="${sizeS}" />
+          <input type="number" name="sizeP" th:value="${sizeP}" min="1" max="50" />
+          <button class="btn sm alt" type="submit">Aplicar</button>
+        </form>
+      </div>
+
+      <nav class="pager" th:if="${profissionaisPage.totalPages > 1}">
+        <a th:classappend="${profissionaisPage.first} ? 'disabled'"
+           th:href="@{/admin/painel(pageP=${profissionaisPage.number-1},sizeP=${sizeP},pageC=${0},sizeC=${sizeC},pageS=${0},sizeS=${sizeS})}#profissionais">« Anterior</a>
+        <span class="badge">Página <b th:text="${profissionaisPage.number+1}">1</b> de <b th:text="${profissionaisPage.totalPages}">1</b></span>
+        <a th:classappend="${profissionaisPage.last} ? 'disabled'"
+           th:href="@{/admin/painel(pageP=${profissionaisPage.number+1},sizeP=${sizeP},pageC=${0},sizeC=${sizeC},pageS=${0},sizeS=${sizeS})}#profissionais">Próximo »</a>
+      </nav>
+    </div>
+
+    <!-- =================== CLIENTES =================== -->
+    <div class="card" id="clientes">
+      <h3>Clientes</h3>
+      <table>
+        <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>Status</th>
+          <th style="width:280px;">Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="c : ${clientesPage.content}">
+          <td th:text="${c.nome}">Nome</td>
+          <td th:text="${c.email}">email</td>
+          <td th:text="${c.telefone}">tel</td>
+          <td><span class="badge" th:text="${c.status}">ATIVO</span></td>
+          <td class="actions">
+            <form th:if="${c.status != null && !#strings.equalsIgnoreCase(c.status,'ATIVO')}"
+                  th:action="@{|/admin/aprovar-cliente/${c.id}|}" method="post">
+              <input type="hidden" name="pageC" th:value="${clientesPage.number}" />
+              <input type="hidden" name="sizeC" th:value="${sizeC}" />
+              <button class="btn sm ok" type="submit">Aprovar</button>
+            </form>
+            <a class="btn sm alt" th:href="@{|/admin/editar-cliente/${c.id}|}">Editar</a>
+            <form th:action="@{|/admin/recusar-cliente/${c.id}|}" method="post"
+                  onsubmit="return confirm('Recusar este cadastro? Isso removerá o cliente e suas solicitações.');">
+              <input type="hidden" name="pageC" th:value="${clientesPage.number}" />
+              <input type="hidden" name="sizeC" th:value="${sizeC}" />
+              <button class="btn sm warn" type="submit">Recusar</button>
+            </form>
+            <form th:action="@{|/admin/excluir-cliente/${c.id}|}" method="post"
+                  onsubmit="return confirm('Excluir definitivamente? Esta ação é irreversível.');">
+              <input type="hidden" name="pageC" th:value="${clientesPage.number}" />
+              <input type="hidden" name="sizeC" th:value="${sizeC}" />
+              <button class="btn sm danger" type="submit">Excluir</button>
+            </form>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(clientesPage.content)}">
+          <td colspan="5" style="text-align:center">Nenhum cliente encontrado.</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="sizes">
+        Itens por página:
+        <form th:action="@{/admin/painel}" method="get">
+          <input type="hidden" name="pageP" th:value="${0}" />
+          <input type="hidden" name="sizeP" th:value="${sizeP}" />
+          <input type="hidden" name="pageS" th:value="${0}" />
+          <input type="hidden" name="sizeS" th:value="${sizeS}" />
+          <input type="number" name="sizeC" th:value="${sizeC}" min="1" max="50" />
+          <button class="btn sm alt" type="submit">Aplicar</button>
+        </form>
+      </div>
+
+      <nav class="pager" th:if="${clientesPage.totalPages > 1}">
+        <a th:classappend="${clientesPage.first} ? 'disabled'"
+           th:href="@{/admin/painel(pageC=${clientesPage.number-1},sizeC=${sizeC},pageP=${0},sizeP=${sizeP},pageS=${0},sizeS=${sizeS})}#clientes">« Anterior</a>
+        <span class="badge">Página <b th:text="${clientesPage.number+1}">1</b> de <b th:text="${clientesPage.totalPages}">1</b></span>
+        <a th:classappend="${clientesPage.last} ? 'disabled'"
+           th:href="@{/admin/painel(pageC=${clientesPage.number+1},sizeC=${sizeC},pageP=${0},sizeP=${sizeP},pageS=${0},sizeS=${sizeS})}#clientes">Próximo »</a>
+      </nav>
+    </div>
+
+    <!-- =================== SOLICITAÇÕES =================== -->
+    <div class="card" id="solicitacoes">
+      <h3>Solicitações</h3>
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Profissional</th>
+          <th>Descrição</th>
+          <th>Data</th>
+          <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s : ${solicitacoesPage.content}">
+          <td th:text="${s.id}">1</td>
+          <td th:text="${s.cliente != null ? s.cliente.nome : '-'}">Cliente</td>
+          <td th:text="${s.profissional != null ? s.profissional.nome : '-'}">Profissional</td>
+          <td th:text="${s.descricao}">Desc</td>
+          <td th:text="${#temporals.format(s.dataSolicitacao,'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+          <td><span class="badge" th:text="${s.status}">PENDENTE</span></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(solicitacoesPage.content)}">
+          <td colspan="6" style="text-align:center">Nenhuma solicitação encontrada.</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="sizes">
+        Itens por página:
+        <form th:action="@{/admin/painel}" method="get">
+          <input type="hidden" name="pageP" th:value="${0}" />
+          <input type="hidden" name="sizeP" th:value="${sizeP}" />
+          <input type="hidden" name="pageC" th:value="${0}" />
+          <input type="hidden" name="sizeC" th:value="${sizeC}" />
+          <input type="number" name="sizeS" th:value="${sizeS}" min="1" max="50" />
+          <button class="btn sm alt" type="submit">Aplicar</button>
+        </form>
+      </div>
+
+      <nav class="pager" th:if="${solicitacoesPage.totalPages > 1}">
+        <a th:classappend="${solicitacoesPage.first} ? 'disabled'"
+           th:href="@{/admin/painel(pageS=${solicitacoesPage.number-1},sizeS=${sizeS},pageP=${0},sizeP=${sizeP},pageC=${0},sizeC=${sizeC})}#solicitacoes">« Anterior</a>
+        <span class="badge">Página <b th:text="${solicitacoesPage.number+1}">1</b> de <b th:text="${solicitacoesPage.totalPages}">1</b></span>
+        <a th:classappend="${solicitacoesPage.last} ? 'disabled'"
+           th:href="@{/admin/painel(pageS=${solicitacoesPage.number+1},sizeS=${sizeS},pageP=${0},sizeP=${sizeP},pageC=${0},sizeC=${sizeC})}#solicitacoes">Próximo »</a>
+      </nav>
+    </div>
+
   </div>
 </div>
 </body>

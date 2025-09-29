@@ -6,6 +6,10 @@ import br.com.construafacil.model.Solicitacao;
 import br.com.construafacil.repository.ClienteRepository;
 import br.com.construafacil.repository.ProfissionalRepository;
 import br.com.construafacil.repository.SolicitacaoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -37,11 +40,20 @@ public class SolicitacaoController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Formulário para nova solicitação (cliente OU profissional)
+    // Formulário para nova solicitação (cliente OU profissional) com paginação de profissionais
     @GetMapping("/nova")
-    public String novaSolicitacao(Model model) {
+    public String novaSolicitacao(
+            Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
+        Page<Profissional> profissionaisPage = profissionalRepository.findByStatus("ATIVO", pageable);
+
         model.addAttribute("solicitacao", new Solicitacao());
-        model.addAttribute("profissionais", profissionalRepository.findByStatus("ATIVO"));
+        model.addAttribute("profissionaisPage", profissionaisPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
         return "solicitacao";
     }
 
@@ -49,7 +61,15 @@ public class SolicitacaoController {
     @PostMapping("/nova")
     public String salvarSolicitacao(@ModelAttribute Solicitacao solicitacao,
                                     Principal principal,
-                                    Model model) {
+                                    Model model,
+                                    @RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "12") int size) {
+
+        if (principal == null) {
+            // Usuário não autenticado (apenas por segurança)
+            return "redirect:/login?error";
+        }
+
         // 1) Quem está logado?
         String email = principal.getName();
 
@@ -66,7 +86,12 @@ public class SolicitacaoController {
 
         if (cliente == null) {
             model.addAttribute("erro", "Não foi possível identificar o solicitante.");
-            model.addAttribute("profissionais", profissionalRepository.findByStatus("ATIVO"));
+            // recarrega paginação para reexibir o formulário
+            Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
+            Page<Profissional> profissionaisPage = profissionalRepository.findByStatus("ATIVO", pageable);
+            model.addAttribute("profissionaisPage", profissionaisPage);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("pageSize", size);
             return "solicitacao";
         }
 
@@ -78,7 +103,12 @@ public class SolicitacaoController {
 
         if (profissional == null || !"ATIVO".equalsIgnoreCase(profissional.getStatus())) {
             model.addAttribute("erro", "Selecione um profissional válido.");
-            model.addAttribute("profissionais", profissionalRepository.findByStatus("ATIVO"));
+            // recarrega paginação para reexibir o formulário
+            Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
+            Page<Profissional> profissionaisPage = profissionalRepository.findByStatus("ATIVO", pageable);
+            model.addAttribute("profissionaisPage", profissionaisPage);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("pageSize", size);
             return "solicitacao";
         }
 
@@ -90,7 +120,6 @@ public class SolicitacaoController {
         solicitacaoRepository.save(solicitacao);
 
         // Redireciona de acordo com o papel "provável" do usuário
-        // (se ele é cliente 'de verdade', vai para painel do cliente; senão segue no painel do profissional)
         if (clienteRepository.findByEmail(email) != null) {
             return "redirect:/clientes/painel?sucesso";
         } else {
@@ -111,7 +140,7 @@ public class SolicitacaoController {
         Cliente novo = new Cliente();
         novo.setNome(p.getNome());
         novo.setEmail(p.getEmail());
-        // senha técnica aleatória (não usada para login), mas armazenada com hash
+        // senha técnica aleatória (não usada para login), armazenada com hash
         String senhaAleatoria = "PX-" + UUID.randomUUID();
         novo.setSenha(passwordEncoder.encode(senhaAleatoria));
         novo.setTelefone(p.getTelefone());

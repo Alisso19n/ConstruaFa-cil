@@ -30,7 +30,14 @@
         .lead{color:#4a6f8a; margin:0 0 18px}
         .actions{display:flex; gap:10px; flex-wrap:wrap}
         .card-hero{background:#fff; border-radius:16px; box-shadow:0 6px 30px rgba(44,160,255,.15); padding:18px}
-        .illus{min-height:200px; background:linear-gradient(135deg,#fff 0%, #eef7ff 100%); border-radius:16px; box-shadow: inset 0 0 0 1px #eef3fb}
+        .illus{
+            min-height:280px;
+            background-image:url('/images/hero-trabalhador.jpeg');
+            background-size:cover;
+            background-position:center;
+            border-radius:16px;
+            box-shadow: inset 0 0 0 1px #eef3fb;
+        }
         /* quick categories */
         .cats{padding:8px 18px 26px}
         .grid{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:repeat(6,1fr); gap:12px}
@@ -65,7 +72,7 @@
         @media (max-width:1000px){ .cards{grid-template-columns:repeat(3,1fr)} .grid{grid-template-columns:repeat(4,1fr)} .tgrid{grid-template-columns:repeat(2,1fr)} }
         @media (max-width:760px){
           .hero .inner{grid-template-columns:1fr; text-align:center}
-          .illus{min-height:160px}
+          .illus{min-height:200px}
           .cards{grid-template-columns:repeat(2,1fr)}
           .grid{grid-template-columns:repeat(3,1fr)}
         }
@@ -96,12 +103,12 @@
             <h1 class="title">Sua obra começa aqui — fácil, rápido e seguro.</h1>
             <p class="lead">Compare profissionais, veja avaliações e feche serviços com transparência.</p>
 
-            <!-- Reduzimos a redundância: só um CTA primário no herói -->
+            <!-- CTA único no herói -->
             <div class="actions">
                 <a class="btn" th:href="@{/login}">Começar agora</a>
             </div>
 
-            <!-- Texto auxiliar com links discretos (não botões) -->
+            <!-- Links discretos para cadastro -->
             <div style="margin-top:10px; font-size:.95rem; color:#4a6f8a">
                 Novo por aqui? Cadastre-se como
                 <a th:href="@{/clientes/cadastro}">cliente</a>
@@ -118,20 +125,20 @@
 
 <section class="cats">
     <div class="grid">
-        <!-- Agora os chips realmente navegam: levam para o login com a categoria na querystring -->
-        <a class="chip" th:href="@{'/login'(categoria='Pedreiro')}" title="Ver pedreiros">Pedreiro</a>
-        <a class="chip" th:href="@{'/login'(categoria='Eletricista')}" title="Ver eletricistas">Eletricista</a>
-        <a class="chip" th:href="@{'/login'(categoria='Encanador')}" title="Ver encanadores">Encanador</a>
-        <a class="chip" th:href="@{'/login'(categoria='Pintor')}" title="Ver pintores">Pintor</a>
-        <a class="chip" th:href="@{'/login'(categoria='Carpinteiro')}" title="Ver carpinteiros">Carpinteiro</a>
-        <a class="chip" th:href="@{'/login'(categoria='Gesso e Drywall')}" title="Ver gesseiros e drywall">Gesso & Drywall</a>
+        <!-- Chips agora abrem o CATÁLOGO com filtro de profissão -->
+        <a class="chip" th:href="@{/catalogo(profissao='Pedreiro')}" title="Ver pedreiros">Pedreiro</a>
+        <a class="chip" th:href="@{/catalogo(profissao='Eletricista')}" title="Ver eletricistas">Eletricista</a>
+        <a class="chip" th:href="@{/catalogo(profissao='Encanador')}" title="Ver encanadores">Encanador</a>
+        <a class="chip" th:href="@{/catalogo(profissao='Pintor')}" title="Ver pintores">Pintor</a>
+        <a class="chip" th:href="@{/catalogo(profissao='Carpinteiro')}" title="Ver carpinteiros">Carpinteiro</a>
+        <a class="chip" th:href="@{/catalogo(profissao='Gesso e Drywall')}" title="Ver gesseiros e drywall">Gesso & Drywall</a>
     </div>
 </section>
 
 <section class="market">
     <h3 class="sec-title">Anúncios em destaque</h3>
     <div class="cards">
-        <!-- Card exemplo 1 -->
+        <!-- Card 1 -->
         <article class="card">
             <div class="thumb"></div>
             <div class="body">
@@ -144,12 +151,13 @@
                 </div>
             </div>
             <div class="cta">
-                <a class="btn" th:href="@{'/login'(anuncio='instalacao-eletrica-residencial')}">Ver detalhes</a>
-                <a class="btn alt" th:href="@{'/clientes/cadastro'(anuncio='instalacao-eletrica-residencial')}">Solicitar</a>
+                <!-- Agora “Ver detalhes” abre o catálogo filtrado -->
+                <a class="btn" th:href="@{/catalogo(profissao='Eletricista')}">Ver detalhes</a>
+                <a class="btn alt" th:href="@{/clientes/cadastro}">Solicitar</a>
             </div>
         </article>
 
-        <!-- Card exemplo 2 -->
+        <!-- Card 2 -->
         <article class="card">
             <div class="thumb"></div>
             <div class="body">
@@ -162,12 +170,12 @@
                 </div>
             </div>
             <div class="cta">
-                <a class="btn" th:href="@{'/login'(anuncio='revitalizacao-pintura-interna')}">Ver detalhes</a>
-                <a class="btn alt" th:href="@{'/clientes/cadastro'(anuncio='revitalizacao-pintura-interna')}">Solicitar</a>
+                <a class="btn" th:href="@{/catalogo(profissao='Pintor')}">Ver detalhes</a>
+                <a class="btn alt" th:href="@{/clientes/cadastro}">Solicitar</a>
             </div>
         </article>
 
-        <!-- Card exemplo 3 -->
+        <!-- Card 3 -->
         <article class="card">
             <div class="thumb"></div>
             <div class="body">
@@ -180,12 +188,12 @@
                 </div>
             </div>
             <div class="cta">
-                <a class="btn" th:href="@{'/login'(anuncio='conserto-de-vazamentos')}">Ver detalhes</a>
-                <a class="btn alt" th:href="@{'/clientes/cadastro'(anuncio='conserto-de-vazamentos')}">Solicitar</a>
+                <a class="btn" th:href="@{/catalogo(profissao='Encanador')}">Ver detalhes</a>
+                <a class="btn alt" th:href="@{/clientes/cadastro}">Solicitar</a>
             </div>
         </article>
 
-        <!-- Card exemplo 4 -->
+        <!-- Card 4 -->
         <article class="card">
             <div class="thumb"></div>
             <div class="body">
@@ -198,8 +206,8 @@
                 </div>
             </div>
             <div class="cta">
-                <a class="btn" th:href="@{'/login'(anuncio='assentamento-de-pisos')}">Ver detalhes</a>
-                <a class="btn alt" th:href="@{'/clientes/cadastro'(anuncio='assentamento-de-pisos')}">Solicitar</a>
+                <a class="btn" th:href="@{/catalogo(profissao='Pedreiro')}">Ver detalhes</a>
+                <a class="btn alt" th:href="@{/clientes/cadastro}">Solicitar</a>
             </div>
         </article>
     </div>

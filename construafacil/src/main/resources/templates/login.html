@@ -2,54 +2,147 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>ConstruaFácil — Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Entrar • ConstruaFácil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      background: linear-gradient(135deg, #6ec1e4 0%, #ffffff 100%);
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0; padding: 0; min-height: 100vh;
-      display: flex; justify-content: center; align-items: center;
+    :root{
+      --brand:#3498db; --brand-dark:#217dbb; --accent:#27ae60;
+      --bg:#eaf6fb; --ink:#233142; --line:#e8eef7; --danger:#e74c3c;
     }
-    .login-box {
-      background: #fff; border-radius: 18px;
-      box-shadow: 0 6px 30px rgba(44,160,255,0.15);
-      padding: 42px 34px; max-width: 370px; width: 100%; text-align: center;
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:'Segoe UI', Arial, sans-serif; color:var(--ink);
+      background:linear-gradient(135deg, var(--bg) 0%, #d5ecfa 100%);
+      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
     }
-    .logo { font-size: 2.1em; color: #3498db; font-weight: bold; margin-bottom: 10px; letter-spacing: 2px; }
-    .slogan { font-size: 1.05em; color: #2980b9; margin-bottom: 22px; font-weight: 500; }
-    input[type="text"], input[type="password"] {
-      width: 100%; padding: 12px 10px; margin: 10px 0 18px 0;
-      border: 1px solid #c7e5f8; border-radius: 7px; font-size: 1em;
+    .shell{ width:100%; max-width:980px }
+    header{
+      background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px 16px; margin:0 auto 16px;
+      box-shadow:0 2px 14px rgba(44,160,255,.08);
     }
-    button {
-      width: 100%; padding: 12px; border: none; border-radius: 7px;
-      background-color: #3498db; color: #fff; font-size: 1.1em; font-weight: bold; cursor: pointer;
+    .brand{ font-weight:800; color:var(--brand); letter-spacing:.5px }
+    .wrap{ display:grid; grid-template-columns:1.05fr .95fr; gap:18px }
+    .card{
+      background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px;
+      box-shadow:0 6px 30px rgba(44,160,255,.12);
     }
-    button:hover { background-color: #217dbb; }
-    .message { font-size: 0.95em; margin-bottom: 10px; }
-    .back { display:block; margin-top:14px; color:#3498db; text-decoration:none }
-    .back:hover{ color:#217dbb }
+    h1{ margin:0 0 8px; color:var(--brand-dark) }
+    p.lead{ margin:0 0 16px; color:#4a6f8a }
+    label{ display:block; font-weight:600; color:#245b8a; margin-bottom:6px }
+    input[type="email"], input[type="password"]{
+      width:100%; padding:12px; border:1px solid #d7e7fb; border-radius:10px; outline:none;
+      transition:border .15s ease, box-shadow .15s ease; background:#fff;
+    }
+    input:focus{ border-color:var(--brand); box-shadow:0 0 0 3px rgba(52,152,219,.15) }
+    .row{ margin-bottom:12px }
+    .btn{
+      display:inline-block; padding:12px 16px; border-radius:10px; border:1px solid var(--brand); background:var(--brand);
+      color:#fff; font-weight:700; width:100%; text-align:center; cursor:pointer;
+    }
+    .btn:hover{ filter:brightness(.97) }
+    .btn.ghost{ background:#fff; color:var(--brand); border-color:var(--brand) }
+    .btn.alt{ background:var(--accent); border-color:var(--accent) }
+    .links{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px }
+    .links a{ flex:1; text-decoration:none }
+    .hint{ margin-top:12px; font-size:.95rem; color:#527491 }
+    .alert{ margin:8px 0 12px; padding:10px 12px; border-radius:10px; font-size:.95rem }
+    .alert.err{ background:#fff6f6; border:1px solid #ffdede; color:#b10000 }
+    .alert.ok{ background:#f3fff7; border:1px solid #d6f5e3; color:#0e7a40 }
+    .panel{
+      background:linear-gradient(180deg,#ffffff 0%, #f7fbff 100%);
+      border:1px solid var(--line); border-radius:16px; padding:18px;
+    }
+
+    /* ====== IMAGEM AQUI (igual ao index, com overlay) ====== */
+    .illus{
+      position:relative;
+      height:220px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid #eef3fb;
+      background-image:url('/images/hero-trabalhador1.jpeg'); /* ajuste para .jpeg se for o seu caso */
+      background-size:cover;
+      background-position:center;
+      margin-bottom:12px;
+      box-shadow:0 6px 20px rgba(44,160,255,.10);
+    }
+    .illus::before{
+      content:"";
+      position:absolute; inset:0;
+      background:linear-gradient(to top, rgba(0,0,0,.35) 0%, rgba(0,0,0,.18) 45%, rgba(0,0,0,0) 100%);
+      pointer-events:none;
+    }
+
+    .bullet{ display:flex; gap:10px; margin:10px 0; color:#365f85 }
+    .bullet b{ color:#2c3e50 }
+    @media (max-width:880px){
+      .wrap{ grid-template-columns:1fr }
+      .illus{ height:180px }
+    }
   </style>
 </head>
 <body>
-<div class="login-box">
-  <div class="logo">ConstruaFácil</div>
-  <div class="slogan">Faça login para acessar seu painel.</div>
+<div class="shell">
 
-  <!-- Mensagens -->
-  <div th:if="${param.error}" class="message" style="color:#d62828;">Usuário ou senha inválidos.</div>
-  <div th:if="${param.logout}" class="message" style="color:#218838;">Logout realizado com sucesso.</div>
-  <div th:if="${param.cadastroSucesso}" class="message" style="color:#218838;">Cadastro realizado! Faça o login.</div>
-  <div th:if="${param.aguardeAprovacao}" class="message" style="color:#e67e22;">Cadastro enviado! Aguarde aprovação do admin.</div>
+  <header>
+    <div class="brand">ConstruaFácil</div>
+  </header>
 
-  <form th:action="@{/login}" method="post">
-    <input type="text" name="username" placeholder="E-mail ou admin" required>
-    <input type="password" name="password" placeholder="Senha" required>
-    <button type="submit">Entrar</button>
-  </form>
+  <div class="wrap">
 
-  <a class="back" th:href="@{/}">← Voltar à página inicial</a>
+    <!-- Coluna do formulário -->
+    <div class="card">
+      <h1>Entrar</h1>
+      <p class="lead">Acesse sua conta para gerenciar solicitações e propostas.</p>
+
+      <!-- Mensagens -->
+      <div class="alert err" th:if="${param.error}">E-mail ou senha inválidos.</div>
+      <div class="alert ok" th:if="${param.logout}">Você saiu com sucesso.</div>
+      <div class="alert ok" th:if="${param.cadastroSucesso}">Cadastro realizado! Faça login para continuar.</div>
+      <div class="alert ok" th:if="${param.aguardeAprovacao}">Cadastro enviado. Aguarde a aprovação do administrador.</div>
+
+      <form method="post" th:action="@{/login}">
+        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="row">
+          <label for="username">E-mail</label>
+          <input id="username" name="username" type="email" placeholder="seuemail@exemplo.com" required />
+        </div>
+
+        <div class="row">
+          <label for="password">Senha</label>
+          <input id="password" name="password" type="password" placeholder="••••••••" required />
+        </div>
+
+        <div class="row">
+          <button class="btn" type="submit">Entrar</button>
+        </div>
+      </form>
+
+      <div class="links">
+        <a class="btn ghost" th:href="@{/}">Página inicial</a>
+        <a class="btn ghost" th:href="@{/clientes/cadastro}">Cadastrar Cliente</a>
+        <a class="btn ghost" th:href="@{/profissionais/cadastro}">Cadastrar Profissional</a>
+      </div>
+
+      <div class="hint">
+        Precisa de acesso ao painel administrativo? Fale com o responsável do sistema.
+      </div>
+    </div>
+
+    <!-- Coluna lateral (informativa) -->
+    <aside class="panel">
+      <div class="illus"></div>
+      <div class="bullet">✅ <b>Seguro:</b> seus dados são protegidos.</div>
+      <div class="bullet">⚡ <b>Rápido:</b> encontre profissionais em poucos cliques.</div>
+      <div class="bullet">⭐ <b>Confiável:</b> avaliações reais e transparência.</div>
+
+      <div class="hint" style="margin-top:12px;">
+        Dica: complete seu perfil para aparecer melhor nas buscas do catálogo.
+      </div>
+    </aside>
+
+  </div>
 </div>
 </body>
 </html>

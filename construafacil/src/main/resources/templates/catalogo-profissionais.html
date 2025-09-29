@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Catálogo de Profissionais | ConstruaFácil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root{ --brand:#3498db; --ink:#233142; --soft:#eef6ff; }
+    body{margin:0; font-family:'Segoe UI', Arial, sans-serif; background:linear-gradient(135deg,#eaf6fb 0%,#d5ecfa 100%); color:var(--ink)}
+    .wrap{max-width:1180px; margin:20px auto; padding:0 16px}
+    h1{color:#217dbb; font-size:1.6rem}
+    .bar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:14px 0}
+    input,select{padding:10px 12px; border:1px solid #d7e7fb; border-radius:8px; font-size:1rem}
+    .btn{padding:10px 16px; border:none; border-radius:8px; font-weight:700; background:var(--brand); color:#fff; cursor:pointer}
+    .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:16px}
+    .card{background:#fff; border:1px solid #e9f2fb; border-radius:14px; padding:14px; box-shadow:0 2px 14px rgba(44,160,255,.08)}
+    .prof{font-weight:800; color:#2c3e50; margin:0 0 6px}
+    .meta{color:#6a7b8d; font-size:.95rem; margin-bottom:8px}
+    .pill{display:inline-block; background:var(--soft); border:1px solid #d7e7fb; border-radius:999px; padding:4px 10px; font-size:.85rem; color:#2269a9}
+    .pager{display:flex; gap:6px; flex-wrap:wrap; margin:18px 0; align-items:center}
+    .pagebtn{padding:8px 12px; border:1px solid #d7e7fb; background:#fff; border-radius:8px; text-decoration:none; color:#2269a9; font-weight:600}
+    .pagebtn[aria-current="true"]{background:#3498db; color:#fff; border-color:#3498db}
+    @media (max-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
+    @media (max-width:640px){ .grid{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:460px){ .grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Catálogo de Profissionais</h1>
+
+  <form class="bar" th:action="@{/catalogo}" method="get">
+    <input type="text" name="q" th:value="${q}" placeholder="Buscar por nome…">
+    <select name="profissao">
+      <option th:value="${null}" th:selected="${profissao == null}">Todas as profissões</option>
+      <option th:value="'Pedreiro'" th:selected="${profissao == 'Pedreiro'}">Pedreiro</option>
+      <option th:value="'Eletricista'" th:selected="${profissao == 'Eletricista'}">Eletricista</option>
+      <option th:value="'Encanador'" th:selected="${profissao == 'Encanador'}">Encanador</option>
+      <option th:value="'Pintor'" th:selected="${profissao == 'Pintor'}">Pintor</option>
+      <option th:value="'Carpinteiro'" th:selected="${profissao == 'Carpinteiro'}">Carpinteiro</option>
+      <!-- adicione mais se quiser -->
+    </select>
+    <button class="btn" type="submit">Filtrar</button>
+  </form>
+
+  <div class="grid">
+    <div class="card" th:each="p : ${page.content}">
+      <h3 class="prof" th:text="${p.nome}">Nome</h3>
+      <div class="meta"><strong th:text="${p.profissao}">Profissão</strong></div>
+      <div class="meta" th:text="${p.email}">email@exemplo.com</div>
+      <div class="pill">ATENDENDO</div>
+    </div>
+    <div th:if="${page.totalElements == 0}">
+      Nenhum profissional encontrado.
+    </div>
+  </div>
+
+  <!-- Paginação -->
+  <div class="pager" th:if="${page.totalPages > 1}">
+    <a class="pagebtn"
+       th:classappend="${page.first} ? ' disabled' : ''"
+       th:href="@{/catalogo(page=${page.number-1}, size=${page.size}, profissao=${profissao}, q=${q})}">« Anterior</a>
+
+    <a class="pagebtn"
+       th:each="i : ${#numbers.sequence(0, page.totalPages-1)}"
+       th:href="@{/catalogo(page=${i}, size=${page.size}, profissao=${profissao}, q=${q})}"
+       th:text="${i+1}"
+       th:attr="aria-current=${i == page.number}">1</a>
+
+    <a class="pagebtn"
+       th:classappend="${page.last} ? ' disabled' : ''"
+       th:href="@{/catalogo(page=${page.number+1}, size=${page.size}, profissao=${profissao}, q=${q})}">Próxima »</a>
+  </div>
+
+  <div style="margin-top:10px">
+    <a th:href="@{/}">← Voltar para a página inicial</a>
+  </div>
+</div>
+</body>
+</html>

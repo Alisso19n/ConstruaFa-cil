@@ -2,101 +2,133 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Nova Solicitação | ConstruaFácil</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Serviço</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-        background: linear-gradient(135deg, #eaf6fb 0%, #d5ecfa 100%);
-        font-family: 'Segoe UI', Arial, sans-serif;
-        min-height: 100vh;
-        margin: 0;
+    :root{ --brand:#2c7be5; --brand2:#3498db; --danger:#e74c3c; --ink:#233142; --bg:#f3f8fe; --line:#e8eef7; --ok:#27ae60 }
+    *{box-sizing:border-box}
+    body{ font-family:Segoe UI, Arial, sans-serif; margin:0; background:var(--bg); color:var(--ink) }
+    .wrap{ max-width:980px; margin:20px auto; padding:0 12px }
+    h1{ color:var(--brand2); margin:0 0 10px }
+    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin:12px 0 16px }
+    .btn{ padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; text-decoration:none; color:var(--ink); font-weight:600 }
+    .btn.primary{ background:var(--brand2); border-color:var(--brand2); color:#fff }
+    .btn.alt{ background:#fff; border-color:var(--brand2); color:var(--brand2) }
+    .btn.danger{ background:var(--danger); border-color:var(--danger); color:#fff }
+    .btn.sm{ padding:8px 12px }
+    .card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:16px }
+    .row{ display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap }
+    input[type="text"], textarea{
+      width:100%; padding:10px; border:1px solid #d7e7fb; border-radius:10px;
     }
-    .container {
-        max-width: 430px;
-        margin: 34px auto 0 auto;
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 4px 22px rgba(44,160,255,0.13);
-        padding: 36px 30px 28px 30px;
-    }
-    .titulo {
-        font-size: 1.5em;
-        color: #3498db;
-        font-weight: bold;
-        margin-bottom: 24px;
-        text-align: center;
-    }
-    label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 7px;
-        color: #555;
-    }
-    input, select, textarea {
-        width: 100%;
-        padding: 11px;
-        margin-bottom: 17px;
-        border: 1px solid #c8e4fa;
-        border-radius: 6px;
-        font-size: 1em;
-        box-sizing: border-box;
-        background: #f7fbfe;
-        transition: border 0.2s;
-    }
-    input:focus, select:focus, textarea:focus {
-        border-color: #3498db;
-        outline: none;
-    }
-    .erro {
-        color: #e74c3c;
-        margin-bottom: 15px;
-        text-align: center;
-    }
-    .botao {
-        width: 100%;
-        background-color: #3498db;
-        color: #fff;
-        border: none;
-        border-radius: 7px;
-        font-size: 1em;
-        font-weight: bold;
-        padding: 13px;
-        cursor: pointer;
-        transition: background 0.2s;
-        margin-top: 10px;
-    }
-    .botao:hover {
-        background-color: #217dbb;
-    }
-    @media (max-width: 600px) {
-        .container {
-            padding: 10px 2vw 18px 2vw;
-            max-width: 98vw;
-        }
-    }
+    textarea{ min-height:120px; resize:vertical }
+    table{ width:100%; border-collapse:collapse; table-layout:fixed }
+    th,td{ padding:10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top }
+    th{ background:#eaf4ff; color:#245b8a }
+    .badge{ display:inline-block; padding:4px 8px; border-radius:999px; font-size:.82rem; background:#eef6ff; border:1px solid #dfefff }
+    .pager{ display:flex; justify-content:center; gap:8px; margin:12px 0 0 }
+    .pager a, .pager .badge{ padding:6px 10px; border:1px solid var(--line); border-radius:8px; text-decoration:none; color:#233142; background:#fff }
+    .pager a.disabled{ pointer-events:none; opacity:.45 }
+    .flash{ margin:10px 0; padding:10px 12px; border-radius:10px; border:1px solid #cfe3ff; background:#f3f9ff; color:#205081 }
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="titulo">Solicitar Serviço</div>
-  <form th:action="@{/solicitacoes/nova}" method="post" th:object="${solicitacao}">
-    <div th:if="${erro}" class="erro" th:text="${erro}"></div>
-    <label for="profissional">Profissional:</label>
-    <select id="profissional" name="profissional.id" required>
-      <option value="">Selecione um profissional</option>
-      <option th:each="p : ${profissionais}"
-              th:value="${p.id}"
-              th:text="${p.nome + ' (' + p.profissao + ')'}"></option>
-    </select>
+<div class="wrap">
+  <h1>Solicitar serviço</h1>
 
-    <label for="descricao">Descrição do serviço:</label>
-    <textarea id="descricao" name="descricao" rows="4" placeholder="Descreva o serviço desejado" required th:field="*{descricao}"></textarea>
-
-    <button type="submit" class="botao">Enviar Solicitação</button>
-  </form>
-  <div style="text-align:center;margin-top:15px;">
-    <a th:href="@{/clientes/painel}" style="color:#3498db;font-weight:600;">Voltar para o painel</a>
+  <div class="toolbar">
+    <a class="btn" th:href="@{/}">🏠 Início</a>
+    <a class="btn" th:href="@{/login}">🔐 Login</a>
+    <a class="btn" th:href="@{/clientes/painel}" th:if="${postAction == '/clientes/solicitar'}">↩️ Voltar ao painel</a>
+    <a class="btn" th:href="@{/profissionais/painel}" th:if="${postAction == '/profissionais/solicitar'}">↩️ Voltar ao painel</a>
   </div>
+
+  <div class="flash" th:if="${erro}" th:text="${erro}"></div>
+
+  <!-- ===================== MODO 1: ESCOLHER PROFISSIONAL (busca + lista) ===================== -->
+  <div class="card" th:if="${profissional == null}">
+    <h3>Escolha o profissional</h3>
+
+    <!-- o formulário GET aponta para a MESMA rota (clientes OU profissionais), conforme postAction -->
+    <form method="get" th:action="@{__${postAction}__}">
+      <div class="row">
+        <input type="text" name="q" th:value="${q}" placeholder="Buscar por nome do profissional..." />
+        <button class="btn alt" type="submit">Buscar</button>
+      </div>
+    </form>
+
+    <div th:if="${listaProfissionaisPage != null}">
+      <table>
+        <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>Profissão</th>
+          <th style="width:150px;">Ação</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${listaProfissionaisPage.content}">
+          <td th:text="${p.nome}">Nome</td>
+          <td th:text="${p.email}">email@exemplo.com</td>
+          <td th:text="${p.telefone}">(00) 00000-0000</td>
+          <td><span class="badge" th:text="${p.profissao}">Profissão</span></td>
+          <td>
+            <!-- Seleciona e volta para a mesma rota com ?profissionalId= -->
+            <a class="btn sm primary"
+               th:href="@{__${postAction}__(profissionalId=${p.id})}">Selecionar</a>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(listaProfissionaisPage.content)}">
+          <td colspan="5" style="text-align:center;">Nenhum profissional encontrado.</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <nav class="pager" th:if="${listaProfissionaisPage.totalPages > 1}">
+        <a th:classappend="${listaProfissionaisPage.first} ? 'disabled'"
+           th:href="@{__${postAction}__(q=${q},page=${listaProfissionaisPage.number-1},size=${size})}">« Anterior</a>
+        <span class="badge">Página
+          <b th:text="${listaProfissionaisPage.number+1}">1</b>
+          de <b th:text="${listaProfissionaisPage.totalPages}">1</b></span>
+        <a th:classappend="${listaProfissionaisPage.last} ? 'disabled'"
+           th:href="@{__${postAction}__(q=${q},page=${listaProfissionaisPage.number+1},size=${size})}">Próximo »</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ===================== MODO 2: PROFISSIONAL SELECIONADO + FORM ===================== -->
+  <div class="card" th:if="${profissional != null}">
+    <h3>Enviar solicitação</h3>
+
+    <div class="row" style="gap:14px;">
+      <div style="flex:1;">
+        <div><b>Profissional:</b> <span th:text="${profissional.nome}">Nome</span></div>
+        <div><b>E-mail:</b> <span th:text="${profissional.email}">email</span></div>
+        <div><b>Telefone:</b> <span th:text="${profissional.telefone}">tel</span></div>
+        <div><b>Profissão:</b> <span class="badge" th:text="${profissional.profissao}">Profissão</span></div>
+      </div>
+      <div>
+        <a class="btn sm alt" th:href="@{__${postAction}__(q=${q},page=${page},size=${size})}">Trocar profissional</a>
+      </div>
+    </div>
+
+    <form th:action="@{__${postAction}__}" method="post">
+      <input type="hidden" name="profissionalId" th:value="${profissional.id}" />
+      <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+      <div class="row">
+        <label for="descricao" style="font-weight:600; color:#245b8a;">Descreva o serviço desejado</label>
+        <textarea id="descricao" name="descricao" placeholder="Ex.: Instalar 4 tomadas no quarto e revisar disjuntor." required></textarea>
+      </div>
+      <div class="row" style="gap:10px;">
+        <button class="btn primary" type="submit">Enviar solicitação</button>
+        <a class="btn" th:href="@{/catalogo}">Ver catálogo</a>
+        <a class="btn" th:href="@{/}">Página inicial</a>
+      </div>
+    </form>
+  </div>
+
 </div>
 </body>
 </html>
